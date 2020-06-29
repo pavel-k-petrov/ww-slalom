@@ -1,9 +1,9 @@
-Установить
+РЈСЃС‚Р°РЅРѕРІРёС‚СЊ
 	Node
 	Npm
 	Net Core + SDK
-	Редактор (у меня Visual Studio Code)
+	Р РµРґР°РєС‚РѕСЂ (Сѓ РјРµРЅСЏ Visual Studio Code)
 
-настройка Git
+РЅР°СЃС‚СЂРѕР№РєР° Git
 git config --global core.autocrlf true
 git config --global core.safecrlf true
