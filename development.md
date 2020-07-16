@@ -1,4 +1,4 @@
-Установить
+﻿Установить
 	Node
 	Npm
 	Net Core + SDK
@@ -6,4 +6,4 @@
 
 настройка Git
 git config --global core.autocrlf true
-git config --global core.safecrlf true
+не надо //git config --global core.safecrlf true
