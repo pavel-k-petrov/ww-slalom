@@ -1,8 +1,8 @@
-import { NgxsModule, Store } from '@ngxs/store';
 import { TestBed } from '@angular/core/testing';
+import { NgxsModule, Store } from '@ngxs/store';
 
-import { SlalomGatesState, UpdateSlalomGatesAction } from '.';
 import { SlalomGatesStateGateItem, SlalomGatesStateModel, SlalomGatesStateStartTimeItem } from './models/slalom-gates-state-model';
+import { SlalomGatesState, UpdateSlalomGatesAction } from '.';
 
 describe('SlalomGatesState', () => {
   let store: Store;
@@ -16,8 +16,8 @@ describe('SlalomGatesState', () => {
 
 
   it('should exist', () => {
-      let state = store.selectSnapshot(state => state.SlalomGatesState) as SlalomGatesStateModel;
-      expect(state).toBeTruthy();
+      const slalomGatesState = store.selectSnapshot(state => state.SlalomGatesState) as SlalomGatesStateModel;
+      expect(slalomGatesState).toBeTruthy();
   });
 
   it('should add gate update', () => {
@@ -29,8 +29,8 @@ describe('SlalomGatesState', () => {
         }
       ]));
 
-      let state = store.selectSnapshot(state => state.SlalomGatesState) as SlalomGatesStateModel;
-      expect(state[0]).toEqual({
+    const slalomGatesState = store.selectSnapshot(state => state.SlalomGatesState) as SlalomGatesStateModel;
+    expect(slalomGatesState[0]).toEqual({
         attemptId: 1,
         participantNumber: 12,
         gateNumber: 4,
@@ -51,8 +51,8 @@ describe('SlalomGatesState', () => {
         }
       ]));
 
-      let state = store.selectSnapshot(state => state.SlalomGatesState) as SlalomGatesStateModel;
-      expect(state[0]).toEqual({
+    const slalomGatesState = store.selectSnapshot(state => state.SlalomGatesState) as SlalomGatesStateModel;
+    expect(slalomGatesState[0]).toEqual({
         attemptId: 1,
         participantNumber: 12,
         syncronizationStatus: 'local',

@@ -3,16 +3,16 @@ import { TimeService } from '@app/common/time.service';
 import { Action, State, StateContext } from '@ngxs/store';
 
 import {
-  SlalomGatesUpdate,
-  UpdateSlalomGatesAction,
-  GateUpdate,
-  StartTimeUpdate,
-  FinishTimeUpdate,
-} from './update-slalom-gates.action';
-import {
   SlalomGatesStateModel,
   SyncronizationStatus,
 } from './models/slalom-gates-state-model';
+import {
+  FinishTimeUpdate,
+  GateUpdate,
+  SlalomGatesUpdate,
+  StartTimeUpdate,
+  UpdateSlalomGatesAction,
+} from './update-slalom-gates.action';
 
 @State<SlalomGatesStateModel>({
   name: 'SlalomGatesState',
@@ -29,25 +29,25 @@ export class SlalomGatesState {
   ): void {
     // TODO update server state
     const stateModel = ctx.getState();
-    for (let update of action.updates) {
-      let stateUpdate = {
+    for (const update of action.updates) {
+      const stateUpdate = {
         attemptId: action.attemptId,
         participantNumber: action.participantNumber,
         syncronizationStatus: 'local' as SyncronizationStatus,
       };
-      if (this.IsGateUpdate(update)) {
+      if (this.isGateUpdate(update)) {
         stateModel.push({
           ...stateUpdate,
           gateNumber: update.gateNumber,
           penalty: update.penalty,
           isTerminated: update.isTerminated,
         });
-      } else if (this.IsStartTimeUpdate(update)) {
+      } else if (this.isStartTimeUpdate(update)) {
         stateModel.push({
           ...stateUpdate,
           startTime: update.startTime,
         });
-      } else if (this.IsFinishTimeUpdate(update)) {
+      } else if (this.isFinishTimeUpdate(update)) {
         stateModel.push({
           ...stateUpdate,
           finishTime: update.finishTime,
@@ -57,17 +57,17 @@ export class SlalomGatesState {
     }
   }
 
-  private IsGateUpdate(update: SlalomGatesUpdate): update is GateUpdate {
+  private isGateUpdate(update: SlalomGatesUpdate): update is GateUpdate {
     return (update as GateUpdate).gateNumber !== undefined;
   }
 
-  private IsStartTimeUpdate(
+  private isStartTimeUpdate(
     update: SlalomGatesUpdate
   ): update is StartTimeUpdate {
     return (update as StartTimeUpdate).startTime !== undefined;
   }
 
-  private IsFinishTimeUpdate(
+  private isFinishTimeUpdate(
     update: SlalomGatesUpdate
   ): update is FinishTimeUpdate {
     return (update as FinishTimeUpdate).finishTime !== undefined;
