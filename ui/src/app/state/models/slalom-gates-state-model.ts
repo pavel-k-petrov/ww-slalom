@@ -1,32 +1,33 @@
 import { SlalomTime } from '.';
 
-export interface SlalomGatesStateModel
-{
-  [index: number]:
-    | SlalomGatesStateGateItem
-    | SlalomGatesStateStartTimeItem
-    | SlalomGatesStateFinishTimeItem;
+// TODO подобрать адекватный тип модели состояния
+export interface SlalomGatesStateModel {
+  [participantNumber: number]: SlalomAttemptModel[];
+}
 
-  push(item: SlalomGatesStateGateItem
-        | SlalomGatesStateStartTimeItem
-        | SlalomGatesStateFinishTimeItem): void;
+/** данные по одной попытке одного участника */
+export interface SlalomAttemptModel {
+  attemptId: number;
+  start?: StartTimeItem;
+  finish?: FinishTimeItem;
+  gatePenalties: GatePenaltyItem[];
 }
 
 export interface SlalomGatesStateItemBase {
-  attemptId: number;
-  participantNumber: number;
-
   // TODO реализовать получение текущего пользователя при заполнении
   // TODO должно загружаться только для "ответственных" пользователей
   changeAuthor?: string;
   // TODO реализовать сервис времени
   changeTime?: number;
+
+  /** статус записи - локальное, в процессе отправки, общее */
+  syncronizationStatus: SyncronizationStatus;
 }
 
 /** статус записи - локальное, в процессе отправки, общее */
 export type SyncronizationStatus = 'local' | 'pending' | 'shared';
 
-export interface SlalomGatesStateGateItem extends SlalomGatesStateItemBase {
+export interface GatePenaltyItem extends SlalomGatesStateItemBase {
   /** Номер ворот */
   gateNumber: number;
 
@@ -35,16 +36,14 @@ export interface SlalomGatesStateGateItem extends SlalomGatesStateItemBase {
 
   /** Отстрел - преждевременное завершение попытки при взятии этих ворот */
   isTerminated?: boolean;
-
-  syncronizationStatus: SyncronizationStatus;
 }
 
-export interface SlalomGatesStateStartTimeItem
+export interface StartTimeItem
   extends SlalomGatesStateItemBase {
   startTime: SlalomTime;
 }
 
-export interface SlalomGatesStateFinishTimeItem
+export interface FinishTimeItem
   extends SlalomGatesStateItemBase {
   finishTime: SlalomTime;
 }

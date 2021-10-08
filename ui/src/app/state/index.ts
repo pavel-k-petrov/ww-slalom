@@ -1,2 +1,3 @@
 export * from './slalom-gates.state';
-export * from './update-slalom-gates.action';
+export * from './slalom-gates.actions';
+export * from './slalom-gates.selectors';

@@ -1,0 +1,24 @@
+{
+	"14c13709-d256-4f27-8b3b-52fafcc41d0e": {
+		"filePath": ".grok/14c13709-d256-4f27-8b3b-52fafcc41d0e.grok.json",
+		"id": "14c13709-d256-4f27-8b3b-52fafcc41d0e",
+		"lastModifiedCommitHash": "1baa8f5784a0c6692ccec0466ff63e482972ef2d",
+		"markers": [
+			{
+				"branch": "master",
+				"commitHash": "0600711303e0501bb0b5dd17740c1b456dae3e45",
+				"file": "ui/src/app/state/slalom-gates.state.ts",
+				"location": [
+					16,
+					19
+				],
+				"repo": "ww-slalom"
+			}
+		],
+		"modifiedAt": 1633180851561,
+		"originalAuthor": "pavel-k-petrov",
+		"text": "Состояние для судейства\n",
+		"title": "SlalomGates\nState",
+		"version": 1
+	}
+}
