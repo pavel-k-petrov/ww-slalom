@@ -1,0 +1,70 @@
+{
+	"cells": [
+		{
+			"blockId": "586e9bbf-1493-42c6-8ab5-e7f580efe4d3",
+			"data": {
+				"contents": "@State<SlalomGatesStateModel>({\r\n  name: 'SlalomGatesState',\r\n  defaults: [],\r\n})\r\n",
+				"file": "ui/src/app/state/slalom-gates.state.ts",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 19
+					},
+					"start": {
+						"character": 0,
+						"line": 16
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "you@example.com"
+						}
+					],
+					"branch": "master",
+					"file": "ui/src/app/state/slalom-gates.state.ts",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/pavel-k-petrov/ww-slalom"
+						}
+					],
+					"repoName": "ww-slalom",
+					"revision": "0600711303e0501bb0b5dd17740c1b456dae3e45",
+					"sameRepo": true
+				}
+			},
+			"id": "586e9bbf-1493-42c6-8ab5-e7f580efe4d3",
+			"type": "code",
+			"version": 1
+		}
+	],
+	"graphViewMetadata": {
+		"edges": [
+		],
+		"graph": {
+			"position": [
+				0,
+				-92
+			],
+			"zoom": 1
+		},
+		"nodes": [
+			{
+				"blockId": "586e9bbf-1493-42c6-8ab5-e7f580efe4d3",
+				"dimensions": {
+					"height": 219,
+					"width": 308
+				},
+				"id": "dndnode_0",
+				"position": {
+					"x": 75,
+					"y": 195
+				}
+			}
+		]
+	},
+	"text": "Состояние для судейства\n",
+	"title": "SlalomGates\nState",
+	"version": 1
+}

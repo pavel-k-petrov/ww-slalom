@@ -1,18 +1,14 @@
 import { Injectable } from '@angular/core';
 import { TimeService } from '@app/common/time.service';
-import { Action, State, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
 
 import {
+  GatePenaltyItem,
+  SlalomAttemptModel,
   SlalomGatesStateModel,
   SyncronizationStatus,
 } from './models/slalom-gates-state-model';
-import {
-  FinishTimeUpdate,
-  GateUpdate,
-  SlalomGatesUpdate,
-  StartTimeUpdate,
-  UpdateSlalomGatesAction,
-} from './update-slalom-gates.action';
+import { RecordJudgedGate } from './slalom-gates.actions';
 
 @State<SlalomGatesStateModel>({
   name: 'SlalomGatesState',
@@ -22,54 +18,33 @@ import {
 export class SlalomGatesState {
   constructor(private readonly timeService: TimeService) {}
 
-  @Action(UpdateSlalomGatesAction)
+  @Action(RecordJudgedGate)
   updateSlalomGates(
     ctx: StateContext<SlalomGatesStateModel>,
-    action: UpdateSlalomGatesAction
+    action: RecordJudgedGate
   ): void {
     // TODO update server state
-    const stateModel = ctx.getState();
-    for (const update of action.updates) {
-      const stateUpdate = {
+    const stateModel: SlalomGatesStateModel = ctx.getState();
+    const participantData: SlalomAttemptModel =
+      stateModel[action.participantNumber] ||
+      ({
         attemptId: action.attemptId,
-        participantNumber: action.participantNumber,
-        syncronizationStatus: 'local' as SyncronizationStatus,
-      };
-      if (this.isGateUpdate(update)) {
-        stateModel.push({
-          ...stateUpdate,
-          gateNumber: update.gateNumber,
-          penalty: update.penalty,
-          isTerminated: update.isTerminated,
-        });
-      } else if (this.isStartTimeUpdate(update)) {
-        stateModel.push({
-          ...stateUpdate,
-          startTime: update.startTime,
-        });
-      } else if (this.isFinishTimeUpdate(update)) {
-        stateModel.push({
-          ...stateUpdate,
-          finishTime: update.finishTime,
-        });
-      }
-      ctx.setState(stateModel);
-    }
-  }
+      } as SlalomAttemptModel);
+    const gatePenalties: GatePenaltyItem[] =
+      participantData.gatePenalties || [];
 
-  private isGateUpdate(update: SlalomGatesUpdate): update is GateUpdate {
-    return (update as GateUpdate).gateNumber !== undefined;
-  }
+    const newGatePenaltyItem: GatePenaltyItem = {
+      gateNumber: action.gateNumber,
+      penalty: action.penalty,
+      isTerminated: action.isTerminated,
+      syncronizationStatus: 'local' as SyncronizationStatus,
+    };
 
-  private isStartTimeUpdate(
-    update: SlalomGatesUpdate
-  ): update is StartTimeUpdate {
-    return (update as StartTimeUpdate).startTime !== undefined;
-  }
+    gatePenalties[action.gateNumber] = newGatePenaltyItem;
 
-  private isFinishTimeUpdate(
-    update: SlalomGatesUpdate
-  ): update is FinishTimeUpdate {
-    return (update as FinishTimeUpdate).finishTime !== undefined;
+    participantData.gatePenalties = gatePenalties;
+    stateModel[action.participantNumber] = participantData;
+
+    ctx.setState(stateModel);
   }
 }
