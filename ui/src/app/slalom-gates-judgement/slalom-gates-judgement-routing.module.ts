@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { SelectParticipantComponent } from './select-participant';
+import { SelectParticipantComponent } from './pages/select-participant-page/select-participant';
 
 const routes: Routes = [
   {
@@ -13,7 +13,7 @@ const routes: Routes = [
         redirectTo: 'participant',
       },
       {
-        path: 'participant',
+        path: 'select-participant',
         component: SelectParticipantComponent,
       }
     ],
