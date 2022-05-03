@@ -4,25 +4,29 @@ import { SlalomGatesStateModel } from './models/slalom-gates-state-model';
 import { SlalomGatesState } from './slalom-gates.state';
 
 export class SlalomGatesSelectors {
-  // @Selector([SlalomGatesState])
-  static gatePenalties(
-    participantNumber: number,
-    attemptId: number,
-    gateNumbers: number[]
-  ) {
-    return createSelector(
-      [SlalomGatesState],
-      (state: SlalomGatesStateModel) => {
-        const participantData = state[participantNumber];
-        const attemptData = participantData.find(
-          (attempt) => attempt.attemptId == attemptId
-        );
-        const penaltyItems = attemptData.gatePenalties.filter((p) =>
-          gateNumbers.find(p)
-        );
-        return penaltyItems.map((x) => x.penalty);
-      }
-    );
+  @Selector([SlalomGatesState])
+  static gatePenalties(state: SlalomGatesStateModel) {
+    return (
+      participantNumber: number,
+      attemptId: number,
+      gateNumbers: number[]
+    ) => {
+      const participantData = state[participantNumber];
+      const attemptData = participantData?.find(
+        (attempt) => attempt.attemptId === attemptId
+      );
+      const result = gateNumbers.map(gateNumber => {
+        const gateResult = attemptData?.gatePenalties?.find(x => x.gateNumber === gateNumber);
+        if (gateResult) {
+          return {
+            penalty: gateResult.penalty,
+            isTerminated: gateResult.isTerminated,
+          };
+        }
+        return undefined;
+      });
+      return result;
+    };
   }
 
 
