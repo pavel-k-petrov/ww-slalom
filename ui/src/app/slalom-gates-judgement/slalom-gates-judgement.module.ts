@@ -23,6 +23,7 @@
  */
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { SlalomGatesJudgementRoutingModule } from './slalom-gates-judgement-routing.module';
 import { SelectParticipantPageComponent } from './pages/select-participant-page/select-participant-page.component';
@@ -30,7 +31,8 @@ import { SelectParticipantPageComponent } from './pages/select-participant-page/
 @NgModule({
   imports: [
     CommonModule,
-    SlalomGatesJudgementRoutingModule
+    SlalomGatesJudgementRoutingModule,
+    MatAutocompleteModule,
   ],
   declarations: [SelectParticipantPageComponent]
 })
