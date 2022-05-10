@@ -23,17 +23,50 @@
  */
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { } from '@angular/material/';
 
 import { SlalomGatesJudgementRoutingModule } from './slalom-gates-judgement-routing.module';
 import { SelectParticipantPageComponent } from './pages/select-participant-page/select-participant-page.component';
+import { EditJudgeDataPageComponent } from './pages/edit-judge-data-page/edit-judge-data-page.component';
+import { GateItemResultComponent } from './pages/edit-judge-data-page/gate-item-result/gate-item-result.component';
 
 @NgModule({
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     SlalomGatesJudgementRoutingModule,
     MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatBadgeModule,
+    MatExpansionModule,
+    MatGridListModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatSidenavModule,
+    MatSnackBarModule,
+    MatCardModule,
+    MatChipsModule,
+    MatButtonToggleModule
   ],
-  declarations: [SelectParticipantPageComponent]
+  declarations: [SelectParticipantPageComponent, EditJudgeDataPageComponent, GateItemResultComponent]
 })
 export class SlalomGatesJudgementModule { }

@@ -1,0 +1,37 @@
+<mat-card>
+  <mat-card-title> {{ participantShortInfo$ | async }} </mat-card-title>
+</mat-card>
+<div
+  *ngFor="
+    let judgableItem of judgableItems$ | async;
+    index as index;
+    trackBy: judgableItemTrackBy
+  "
+>
+  <app-gate-item-result [value]="currentValues[judgableItem]" [gateNumber]="judgableItem"></app-gate-item-result>
+  <span> {{ judgableItem }} </span>
+  <button
+    [disabled]="index != currentItemIndex"
+    mat-stroked-button
+    color="primary"
+    (click)="setGateResult(judgableItem, 0)"
+  >
+    0
+  </button>
+  <button
+    [disabled]="index != currentItemIndex"
+    mat-stroked-button
+    color="warn"
+    (click)="setGateResult(judgableItem, 2)"
+  >
+    2
+  </button>
+  <button
+    [disabled]="index != currentItemIndex"
+    mat-stroked-button
+    color="warn"
+    (click)="setGateResult(judgableItem, 50)"
+  >
+    50
+  </button>
+</div>
