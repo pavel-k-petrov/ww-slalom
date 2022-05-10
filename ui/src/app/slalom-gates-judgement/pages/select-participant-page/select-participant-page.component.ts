@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { withLatestFrom, map } from 'rxjs/operators';
+
+import { exampleParticipants, Participant } from '../../models';
 
 /**
  * страница выбора участника для ввода информации по связке ворот для одного судьи
@@ -13,13 +18,36 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-select-participant-page',
   templateUrl: './select-participant-page.component.html',
-  styleUrls: ['./select-participant-page.component.scss']
+  styleUrls: ['./select-participant-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectParticipantPageComponent implements OnInit {
 
-  constructor() { }
+  allParticipants$: BehaviorSubject<Participant[]> = new BehaviorSubject<Participant[]>([]);
+  autocompleteOptions$: Observable<{ value: string; title: string }[]>;
+  numberControl = new FormControl();
 
-  ngOnInit(): void {
+  constructor() {
+    this.autocompleteOptions$ = this.numberControl.valueChanges.pipe(
+      withLatestFrom(this.allParticipants$),
+      map(([enteredValue, participants]) => {
+        if (!enteredValue) {
+          return [];
+        }
+
+        const filteredParticipants = participants
+          .filter((p) => p.shortInfo.includes(enteredValue))
+          .map((p) => ({
+            value: p.participantNumber,
+            title: p.shortInfo,
+          }));
+
+        return filteredParticipants;
+      }));
   }
 
+  ngOnInit(): void {
+    this.allParticipants$.next(exampleParticipants);
+  }
 }
+
