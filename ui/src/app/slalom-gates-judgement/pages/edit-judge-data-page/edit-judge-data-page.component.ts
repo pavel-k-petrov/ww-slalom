@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { RouterStateSnapshot } from '@angular/router';
 import { RouterState, RouterStateModel } from '@ngxs/router-plugin';
 import { Store } from '@ngxs/store';
@@ -26,6 +27,11 @@ export type JudgableItemType = 'Start' | 'Finish' | number;
  * возможности - переключение режимов "онлайн-корректировка", переход на страницу выбора участника
  */
 
+type JudgableForm = {
+  formGroup: FormGroup;
+  itemTypes: JudgableItemType[];
+};
+
 //TODO подумать насчёт разных компонент для режимов "онлайн" и "корректировка"
 @Component({
   selector: 'app-edit-judge-data-page',
@@ -34,11 +40,16 @@ export type JudgableItemType = 'Start' | 'Finish' | number;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditJudgeDataPageComponent implements OnInit {
-
-  allParticipants$: BehaviorSubject<Participant[]> = new BehaviorSubject<Participant[]>([]);
+  allParticipants$: BehaviorSubject<Participant[]> = new BehaviorSubject<
+    Participant[]
+  >([]);
   id$: Observable<string>;
   participantShortInfo$: Observable<string>;
-  judgableItems$: BehaviorSubject<JudgableItemType[]> = new BehaviorSubject<JudgableItemType[]>([]);
+  judgeForm$: BehaviorSubject<JudgableForm> =
+    new BehaviorSubject<JudgableForm>({
+      formGroup: new FormGroup({}),
+      itemTypes: [],
+    });
   currentItemIndex: number;
   currentValues: { [key in JudgableItemType]?: any } = {};
 
@@ -54,16 +65,37 @@ export class EditJudgeDataPageComponent implements OnInit {
       }),
       withLatestFrom(this.allParticipants$),
       map(([id, participants]) => {
-        const participant: Participant = participants.find(x => x.participantNumber === id);
-        return participant ? participant.shortInfo : id + ' - незарегистрирован';
-      }));
+        const participant: Participant = participants.find(
+          (x) => x.participantNumber === id
+        );
+        return participant
+          ? participant.shortInfo
+          : id + ' - незарегистрирован';
+      })
+    );
   }
 
   ngOnInit(): void {
     this.allParticipants$.next(exampleParticipants);
-    // this.judgableItems$.next(['Start', 1, 2, 3, 4, 5, 'Finish']);
-    this.judgableItems$.next([1, 2, 3, 4, 5]);
+    this.judgeForm$.next(this.createFormControl(['Start', 1, 2, 3, 4, 5, 'Finish']));
+    // this.judgeForm$.next(this.createFormControl([1, 2, 3, 4, 5]));
     this.currentItemIndex = 0;
+  }
+
+  createFormControl(itemTypes: JudgableItemType[]): JudgableForm {
+    const controls = itemTypes.reduce(
+      (x: any, currentValue: JudgableItemType) => {
+        x[currentValue] = new FormControl();
+        return x;
+      },
+      {}
+    );
+
+    const form: JudgableForm = {
+      formGroup: new FormGroup(controls),
+      itemTypes,
+    };
+    return form;
   }
 
   judgableItemTrackBy(index: number, item: JudgableItemType): string {
@@ -74,5 +106,8 @@ export class EditJudgeDataPageComponent implements OnInit {
     this.currentValues[item] = penalty;
     this.currentItemIndex++;
   }
-}
 
+  getValue(form: JudgableForm): string {
+    return JSON.stringify(form.formGroup.value);
+  }
+}

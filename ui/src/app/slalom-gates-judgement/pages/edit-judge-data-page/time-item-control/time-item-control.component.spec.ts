@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GateItemResultComponent } from './gate-item-result.component';
+import { TimeItemControlComponent } from './time-item-control.component';
 
-describe('GateItemResultComponentComponent', () => {
-  let component: GateItemResultComponent;
-  let fixture: ComponentFixture<GateItemResultComponent>;
+describe('TimeItemControlComponent', () => {
+  let component: TimeItemControlComponent;
+  let fixture: ComponentFixture<TimeItemControlComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GateItemResultComponent ]
+      declarations: [ TimeItemControlComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GateItemResultComponent);
+    fixture = TestBed.createComponent(TimeItemControlComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
