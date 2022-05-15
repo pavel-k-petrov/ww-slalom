@@ -1,37 +1,24 @@
 <mat-card>
   <mat-card-title> {{ participantShortInfo$ | async }} </mat-card-title>
 </mat-card>
-<div
-  *ngFor="
-    let judgableItem of judgableItems$ | async;
-    index as index;
-    trackBy: judgableItemTrackBy
-  "
->
-  <app-gate-item-result [value]="currentValues[judgableItem]" [gateNumber]="judgableItem"></app-gate-item-result>
-  <span> {{ judgableItem }} </span>
-  <button
-    [disabled]="index != currentItemIndex"
-    mat-stroked-button
-    color="primary"
-    (click)="setGateResult(judgableItem, 0)"
+<div *ngIf="judgeForm$ | async as form">
+  <p>{{ form.itemTypes }}</p>
+  <p>{{ getValue(form) }}</p>
+  <div
+    *ngFor="
+      let itemType of form.itemTypes;
+      index as index;
+      trackBy: judgableItemTrackBy
+    "
   >
-    0
-  </button>
-  <button
-    [disabled]="index != currentItemIndex"
-    mat-stroked-button
-    color="warn"
-    (click)="setGateResult(judgableItem, 2)"
-  >
-    2
-  </button>
-  <button
-    [disabled]="index != currentItemIndex"
-    mat-stroked-button
-    color="warn"
-    (click)="setGateResult(judgableItem, 50)"
-  >
-    50
-  </button>
+    <app-gate-item-control *ngIf="itemType !== 'Start' && itemType!== 'Finish'"
+      [control]="form.formGroup.controls[itemType]"
+      [gateNumber]="itemType"
+    ></app-gate-item-control>
+
+    <app-time-item-control *ngIf="itemType == 'Start' || itemType == 'Finish'"
+      [control]="form.formGroup.controls[itemType]"
+      [title]="itemType"
+    ></app-time-item-control>
+  </div>
 </div>

@@ -39,12 +39,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { } from '@angular/material/';
+import { NgxMaskModule } from 'ngx-mask';
 
 import { SlalomGatesJudgementRoutingModule } from './slalom-gates-judgement-routing.module';
 import { SelectParticipantPageComponent } from './pages/select-participant-page/select-participant-page.component';
 import { EditJudgeDataPageComponent } from './pages/edit-judge-data-page/edit-judge-data-page.component';
-import { GateItemResultComponent } from './pages/edit-judge-data-page/gate-item-result/gate-item-result.component';
+import { GateItemControlComponent } from './pages/edit-judge-data-page/gate-item-control/gate-item-control.component';
+import { TimeItemControlComponent } from './pages/edit-judge-data-page/time-item-control/time-item-control.component';
 
 @NgModule({
   imports: [
@@ -65,8 +66,9 @@ import { GateItemResultComponent } from './pages/edit-judge-data-page/gate-item-
     MatSnackBarModule,
     MatCardModule,
     MatChipsModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    NgxMaskModule.forChild(),
   ],
-  declarations: [SelectParticipantPageComponent, EditJudgeDataPageComponent, GateItemResultComponent]
+  declarations: [SelectParticipantPageComponent, EditJudgeDataPageComponent, GateItemControlComponent, TimeItemControlComponent]
 })
 export class SlalomGatesJudgementModule { }
