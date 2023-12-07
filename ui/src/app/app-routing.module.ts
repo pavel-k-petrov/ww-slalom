@@ -5,10 +5,10 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'slalom/gates',
+    redirectTo: 'judgement',
   },
   {
-    path: 'slalom/gates',
+    path: 'judgement',
     loadChildren: () => import('./slalom-gates-judgement/slalom-gates-judgement.module').then(mod => mod.SlalomGatesJudgementModule),
   }
 ];

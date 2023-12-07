@@ -7,6 +7,11 @@ import { SelectParticipantPageComponent } from './pages/select-participant-page/
 const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
+    redirectTo: 'sample-judge',
+  },
+  {
+    path: ':judge-id',
     children: [
       {
         path: '',
@@ -18,7 +23,7 @@ const routes: Routes = [
         component: SelectParticipantPageComponent,
       },
       {
-        path: 'participant/:id',
+        path: ':attemptCode/:id',
         component: EditJudgeDataPageComponent,
       },
     ],

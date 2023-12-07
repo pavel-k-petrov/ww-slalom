@@ -34,18 +34,21 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { NgxsModule } from '@ngxs/store';
 import { NgxMaskModule } from 'ngx-mask';
 
-import { SlalomGatesJudgementRoutingModule } from './slalom-gates-judgement-routing.module';
-import { SelectParticipantPageComponent } from './pages/select-participant-page/select-participant-page.component';
 import { EditJudgeDataPageComponent } from './pages/edit-judge-data-page/edit-judge-data-page.component';
 import { GateItemControlComponent } from './pages/edit-judge-data-page/gate-item-control/gate-item-control.component';
 import { TimeItemControlComponent } from './pages/edit-judge-data-page/time-item-control/time-item-control.component';
+import { SelectParticipantPageComponent } from './pages/select-participant-page/select-participant-page.component';
+import { SlalomGatesJudgementRoutingModule } from './slalom-gates-judgement-routing.module';
+import { SlalomGatesJudgementState } from './store/slalom-gates-judgement.state';
 
 @NgModule({
   imports: [
@@ -67,7 +70,9 @@ import { TimeItemControlComponent } from './pages/edit-judge-data-page/time-item
     MatCardModule,
     MatChipsModule,
     MatButtonToggleModule,
+    MatRadioModule,
     NgxMaskModule.forChild(),
+    NgxsModule.forFeature([SlalomGatesJudgementState])
   ],
   declarations: [SelectParticipantPageComponent, EditJudgeDataPageComponent, GateItemControlComponent, TimeItemControlComponent]
 })

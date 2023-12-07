@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { RouterStateSnapshot } from '@angular/router';
+import { JudgementItemType } from '@app/store/models';
 import { RouterState, RouterStateModel } from '@ngxs/router-plugin';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -8,7 +9,6 @@ import { map, withLatestFrom } from 'rxjs/operators';
 
 import { exampleParticipants, Participant } from '../../models';
 
-export type JudgableItemType = 'Start' | 'Finish' | number;
 
 /**
  * ввод результатов участников по набору "судейских элементов" (старт-финищ-ворота)
@@ -29,7 +29,7 @@ export type JudgableItemType = 'Start' | 'Finish' | number;
 
 type JudgableForm = {
   formGroup: FormGroup;
-  itemTypes: JudgableItemType[];
+  itemTypes: JudgementItemType[];
 };
 
 //TODO подумать насчёт разных компонент для режимов "онлайн" и "корректировка"
@@ -51,7 +51,7 @@ export class EditJudgeDataPageComponent implements OnInit {
       itemTypes: [],
     });
   currentItemIndex: number;
-  currentValues: { [key in JudgableItemType]?: any } = {};
+  currentValues: { [key in JudgementItemType]?: any } = {};
 
   constructor(private store: Store) {
     this.participantShortInfo$ = this.store.select(RouterState).pipe(
@@ -82,9 +82,9 @@ export class EditJudgeDataPageComponent implements OnInit {
     this.currentItemIndex = 0;
   }
 
-  createFormControl(itemTypes: JudgableItemType[]): JudgableForm {
+  createFormControl(itemTypes: JudgementItemType[]): JudgableForm {
     const controls = itemTypes.reduce(
-      (x: any, currentValue: JudgableItemType) => {
+      (x: any, currentValue: JudgementItemType) => {
         x[currentValue] = new FormControl();
         return x;
       },
@@ -98,7 +98,7 @@ export class EditJudgeDataPageComponent implements OnInit {
     return form;
   }
 
-  judgableItemTrackBy(index: number, item: JudgableItemType): string {
+  judgableItemTrackBy(index: number, item: JudgementItemType): string {
     return '' + item;
   }
 

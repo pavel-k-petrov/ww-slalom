@@ -1,46 +1,84 @@
-<mat-icon>input</mat-icon>&nbsp;
-<mat-form-field class="full-width" appearance="fill">
-  <mat-label>Номер участника</mat-label>
-  <input
-    matInput
-    type="text"
-    placeholder="Введите номер"
-    aria-label="Номер участника"
-    [formControl]="numberControl"
-    [matAutocomplete]="auto"
-  />
-  <mat-autocomplete #auto="matAutocomplete">
-    <mat-option
-      *ngFor="let option of autocompleteOptions$ | async"
-      [value]="option.value"
+<ng-container
+  *ngTemplateOutlet="
+    paticipantSelection;
+    context: {
+      currentAttempt: currentAttempt$ | async,
+      attempts: attempts$ | async
+    }
+  "
+>
+</ng-container>
+<ng-template
+  #paticipantSelection
+  let-currentAttempt="currentAttempt"
+  let-attempts="attempts"
+>
+  <p>Judge - {{ judgeId$ | async }}</p>
+  <p *ngIf="currentAttempt">
+    Текущая попытка - {{ currentAttempt.title }} {{ currentAttempt.code }}
+  </p>
+  <!-- <mat-icon>input</mat-icon>&nbsp; -->
+  <mat-form-field class="full-width" appearance="fill">
+    <mat-label>Номер участника</mat-label>
+    <input
+      matInput
+      type="text"
+      placeholder="Введите номер"
+      aria-label="Номер участника"
+      [formControl]="numberControl"
+    />
+  </mat-form-field>
+
+  <mat-card *ngIf="participantByNumber$ | async as participant">
+    <mat-card-title> {{ participant.title }} </mat-card-title>
+    <mat-radio-group
+      [value]="participant.attemptCode"
+      [formControl]="attemptControl"
     >
-      {{ option.title }}
-    </mat-option>
-  </mat-autocomplete>
-</mat-form-field>
-<mat-card>
-  <mat-card-title> 1 - незарегистрирован </mat-card-title>
-  <mat-card-actions>
-    <button mat-raised-button color="primary">Ввести данные по воротам</button>
-  </mat-card-actions>
-</mat-card>
+      <mat-radio-button
+        *ngFor="let attempt of attempts"
+        value="{{ attempt.code }}"
+      >
+        {{ attempt.title }}
+      </mat-radio-button>
+    </mat-radio-group>
+    <mat-card-actions>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="gotoParticipantByNumberJudgement(participant)"
+      >
+        Ввести данные по воротам
+      </button>
+    </mat-card-actions>
+  </mat-card>
 
-<mat-expansion-panel expanded="true">
-  <mat-expansion-panel-header>
-    <mat-panel-title> Очередь участников </mat-panel-title>
-  </mat-expansion-panel-header>
-  <mat-chip-list class="mat-chip-list-stacked" aria-orientation="vertical">
-    <mat-chip> 52 - Ivanov Michale (K1) </mat-chip>
-    <mat-chip> 59 - Брют Анн (С1ж) </mat-chip>
-  </mat-chip-list>
-</mat-expansion-panel>
+  <mat-expansion-panel expanded="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title> Очередь участников </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card
+      *ngFor="let participant of recommendedForJudge$ | async"
+      class="recomended-card"
+    >
+      {{ participant.shortInfo }}
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="selectRecomendedParticipant(participant)"
+      >
+        Выбрать
+      </button>
+    </mat-card>
+  </mat-expansion-panel>
 
-<mat-expansion-panel expanded="false">
-  <mat-expansion-panel-header>
-    <mat-panel-title> Исправление введённых (1-я попытка) </mat-panel-title>
-  </mat-expansion-panel-header>
-  <mat-chip-list class="mat-chip-list-stacked">
-    <mat-chip> 52 - Ivanov Michale (K1) </mat-chip>
-    <mat-chip> 59 - Брют Анн (С1ж) </mat-chip>
-  </mat-chip-list>
-</mat-expansion-panel>
+  <mat-expansion-panel expanded="false">
+    <mat-expansion-panel-header>
+      <mat-panel-title> Исправление введённых (1-я попытка) </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-chip-list class="mat-chip-list-stacked" aria-orientation="vertical">
+      <mat-chip> 52 - Ivanov Michale (K1) </mat-chip>
+      <mat-chip> 59 - Брют Анн (С1ж) </mat-chip>
+    </mat-chip-list>
+  </mat-expansion-panel>
+</ng-template>
