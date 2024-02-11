@@ -2,8 +2,6 @@
   <mat-card-title> {{ participantShortInfo$ | async }} </mat-card-title>
 </mat-card>
 <div *ngIf="judgeForm$ | async as form">
-  <p>{{ form.itemTypes }}</p>
-  <p>{{ getValue(form) }}</p>
   <div
     *ngFor="
       let itemType of form.itemTypes;
@@ -11,14 +9,22 @@
       trackBy: judgableItemTrackBy
     "
   >
-    <app-gate-item-control *ngIf="itemType !== 'Start' && itemType!== 'Finish'"
-      [control]="form.formGroup.controls[itemType]"
+    <app-gate-item-control *ngIf="itemType !== 'Start' && itemType !== 'Finish'"
+      [score]="scores[itemType]"
       [gateNumber]="itemType"
+      (valueSelected)="onGateScored(itemType, $event)"
     ></app-gate-item-control>
 
     <app-time-item-control *ngIf="itemType == 'Start' || itemType == 'Finish'"
       [control]="form.formGroup.controls[itemType]"
       [title]="itemType"
     ></app-time-item-control>
+  </div>
+  <div>
+    <hr/>
+    <p>debug</p>
+    <p>{{ form.itemTypes }}</p>
+    <p>{{ getValue(form) }}</p>
+    <p>{{ getScoresValue() }}</p>
   </div>
 </div>

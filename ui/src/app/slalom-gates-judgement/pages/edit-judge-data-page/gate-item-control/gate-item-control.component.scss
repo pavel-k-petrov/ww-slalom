@@ -1,1 +1,19 @@
+.gate-number {
+  margin-left: 1em;
+  margin-right: 1em;
+  font-weight: bolder;
+}
+.button-container {
+  display: inline-block;
+  box-sizing: border-box;
+}
 
+.button-container.selected {
+  border-style: solid;
+  border-color: red;
+}
+
+.button-container:not(.selected) {
+  border-style: solid;
+  border-color: transparent;
+}

@@ -1,5 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { GateResult } from '@app/store/judgement/judgement.actions';
 
 @Component({
   selector: 'app-gate-item-control',
@@ -12,7 +12,10 @@ export class GateItemControlComponent implements OnInit {
   gateNumber: number;
 
   @Input()
-  control: FormControl;
+  score: GateResult;
+
+  @Output()
+  valueSelected = new EventEmitter<GateResult>();
 
   controlClass = 'disabled';
 
@@ -21,5 +24,9 @@ export class GateItemControlComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  scoreButtonClicked(score: GateResult) {
+    this.valueSelected.emit(score);
   }
 }

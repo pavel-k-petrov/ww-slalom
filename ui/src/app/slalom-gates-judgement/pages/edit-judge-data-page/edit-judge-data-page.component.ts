@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { RouterStateSnapshot } from '@angular/router';
 import { JudgementItemType } from '@app/store/models';
@@ -8,6 +8,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
 import { exampleParticipants, Participant } from '../../models';
+import { GateResult } from '@app/store/judgement/judgement.actions';
 
 
 /**
@@ -52,8 +53,11 @@ export class EditJudgeDataPageComponent implements OnInit {
     });
   currentItemIndex: number;
   currentValues: { [key in JudgementItemType]?: any } = {};
+  scores: {} = [];
 
-  constructor(private store: Store) {
+  constructor(
+    private store: Store,
+    private cdf: ChangeDetectorRef) {
     this.participantShortInfo$ = this.store.select(RouterState).pipe(
       map((routeState: RouterStateModel) => {
         const routerSnapshot: RouterStateSnapshot = routeState.state;
@@ -109,5 +113,14 @@ export class EditJudgeDataPageComponent implements OnInit {
 
   getValue(form: JudgableForm): string {
     return JSON.stringify(form.formGroup.value);
+  }
+  getScoresValue(): string {
+    return JSON.stringify(this.scores);
+  }
+
+
+  onGateScored(itemType: JudgementItemType, result: GateResult): void {
+    this.scores[itemType] = result;
+    this.cdf.markForCheck();
   }
 }
