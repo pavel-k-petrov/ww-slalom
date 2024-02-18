@@ -14,10 +14,11 @@ export class GateItemControlComponent implements OnInit {
   @Input()
   score: GateResult;
 
+  @Input()
+  disabled: boolean;
+
   @Output()
   valueSelected = new EventEmitter<GateResult>();
-
-  controlClass = 'disabled';
 
   possibleValues = [0, 2, 50, 'DNF'];
 

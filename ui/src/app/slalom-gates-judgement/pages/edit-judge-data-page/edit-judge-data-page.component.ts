@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { RouterStateSnapshot } from '@angular/router';
+import { GateResult } from '@app/store/judgement/judgement.actions';
 import { JudgementItemType } from '@app/store/models';
 import { RouterState, RouterStateModel } from '@ngxs/router-plugin';
 import { Store } from '@ngxs/store';
@@ -8,7 +9,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
 import { exampleParticipants, Participant } from '../../models';
-import { GateResult } from '@app/store/judgement/judgement.actions';
 
 
 /**
@@ -53,7 +53,7 @@ export class EditJudgeDataPageComponent implements OnInit {
     });
   currentItemIndex: number;
   currentValues: { [key in JudgementItemType]?: any } = {};
-  scores: {} = [];
+  scores = {1: 2};
 
   constructor(
     private store: Store,

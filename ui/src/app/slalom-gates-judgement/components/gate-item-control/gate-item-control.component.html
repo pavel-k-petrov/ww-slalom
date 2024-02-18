@@ -1,11 +1,10 @@
 <mat-label class="gate-number">{{ gateNumber }}</mat-label>
 <ng-container *ngFor="let possibleValue of possibleValues">
   <div [ngClass]="{ 'button-container': true, 'selected': possibleValue == score }">
-    <button mat-button (click)="scoreButtonClicked(possibleValue)">
+    <button mat-raised-button (click)="scoreButtonClicked(possibleValue)" [disabled]="disabled == 1">
       {{ possibleValue }}
     </button>
   </div>
 </ng-container>
+<!-- <div class="wrapper">&nbsp;</div> -->
 
-<div class="wrapper">&nbsp;</div>
-<div class="wrapper">score: {{score}}</div>

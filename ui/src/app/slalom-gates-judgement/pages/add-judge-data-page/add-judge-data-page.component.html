@@ -6,27 +6,24 @@
     *ngFor="
       let itemType of form.itemTypes;
       index as index;
+      last as last;
       trackBy: judgableItemTrackBy
     "
   >
     <app-gate-item-control *ngIf="itemType !== 'Start' && itemType !== 'Finish'"
       [score]="scores[itemType]"
       [gateNumber]="itemType"
-
-      (valueSelected)="onGateScored(itemType, $event)"
+      [disabled]="index != currentItemIndex"
+      (valueSelected)="onGateScored(itemType, last, $event)"
     ></app-gate-item-control>
-
     <app-time-item-control *ngIf="itemType == 'Start' || itemType == 'Finish'"
-      [control]="form.formGroup.controls[itemType]"
       [title]="itemType"
     ></app-time-item-control>
-    <div class="disabler" *ngIf="itemType % 2"></div>
+    <div class="disabler" *ngIf="index != currentItemIndex"></div>
   </div>
   <div>
     <hr/>
     <p>debug</p>
-    <p>{{ form.itemTypes }}</p>
-    <p>{{ getValue(form) }}</p>
     <p>{{ getScoresValue() }}</p>
   </div>
 </div>

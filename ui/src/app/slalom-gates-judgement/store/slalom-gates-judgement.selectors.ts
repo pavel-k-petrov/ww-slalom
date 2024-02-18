@@ -49,4 +49,29 @@ export class SlalomGateJudgementSelectors {
       node = node.firstChild;
     }
   }
+/**
+ * получить параметры урла - код судьи, попытки, номер участника
+ */
+  @Selector([RouterState])
+  static judgementIdsFromRoute(routerState: RouterStateModel): {
+    judgeId: string;
+    attemptCode: string;
+    participantNumber: string;
+  } {
+    const routerSnapshot: RouterStateSnapshot = routerState.state;
+    let node: ActivatedRouteSnapshot = routerSnapshot.root;
+    const result = {
+      judgeId: null,
+      attemptCode: null,
+      participantNumber: null,
+    };
+    while (node) {
+      result.judgeId ??= node.params['judge-id'];
+      result.attemptCode ??= node.params.attemptCode;
+      result.participantNumber ??= node.params.id;
+      node = node.firstChild;
+    }
+
+    return result;
+  }
 }
