@@ -11,8 +11,8 @@ export class SettingsSelectors {
       // параметры
     ) => {
       // данные
-      const result = [];
-      return result;
+      const result = state.judges[judgeCode];
+      return result?.judgementItems ?? [];
     };
   }
   @Selector([SettingsState])

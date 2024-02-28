@@ -1,16 +1,44 @@
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { ParticipantsStateModel } from '@app/store/participants/participants-state-model';
+import {
+  Participant,
+  ParticipantsStateModel,
+} from '@app/store/participants/participants-state-model';
 import { ParticipantsSelectors } from '@app/store/participants/participants.selectors';
 import { ParticipantsState } from '@app/store/participants/participants.state';
+import { SettingsStateModel } from '@app/store/settings/settings-state-model';
+import { SettingsState } from '@app/store/settings/settings.state';
 import { RouterState, RouterStateModel } from '@ngxs/router-plugin';
 import { Selector } from '@ngxs/store';
 
 import { ParticipantForJudgement } from './models';
 
 export class SlalomGateJudgementSelectors {
-  @Selector([ParticipantsState])
-  static byNumber(state: ParticipantsStateModel) {
-    return (participantNumber: number) => state[participantNumber];
+  @Selector([
+    ParticipantsState,
+    SlalomGateJudgementSelectors.judgementIdsFromRoute,
+  ])
+  static currentParticipantFromRoute(
+    state: ParticipantsStateModel,
+    ids: {
+      judgeId: string;
+      attemptCode: string;
+      participantNumber: string;
+    }
+  ) {
+    const participantNumber = Number(ids?.participantNumber);
+    const participant: Participant = !isNaN(participantNumber)
+      ? state[participantNumber]
+      : undefined;
+    const judged: ParticipantForJudgement = participant
+      ? {
+          participantNumber: participantNumber + '',
+          shortInfo: `${participantNumber} - ${participant.name} (${participant.group})`,
+        }
+      : {
+          participantNumber: participantNumber + '',
+          shortInfo: participantNumber + ' - незарегистрирован',
+        };
+    return judged;
   }
 
   @Selector([ParticipantsSelectors.recomendedForJudge])
@@ -49,9 +77,9 @@ export class SlalomGateJudgementSelectors {
       node = node.firstChild;
     }
   }
-/**
- * получить параметры урла - код судьи, попытки, номер участника
- */
+  /**
+   * получить параметры урла - код судьи, попытки, номер участника
+   */
   @Selector([RouterState])
   static judgementIdsFromRoute(routerState: RouterStateModel): {
     judgeId: string;
@@ -73,5 +101,21 @@ export class SlalomGateJudgementSelectors {
     }
 
     return result;
+  }
+
+  @Selector([
+    SettingsState,
+    SlalomGateJudgementSelectors.judgementIdsFromRoute,
+  ])
+  static currentJudgeFromRoute(
+    state: SettingsStateModel,
+    ids: {
+      judgeId: string;
+      attemptCode: string;
+      participantNumber: string;
+    }
+  ) {
+    const judge = state.judges[ids.judgeId];
+    return judge;
   }
 }

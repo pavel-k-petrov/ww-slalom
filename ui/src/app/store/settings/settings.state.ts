@@ -11,6 +11,7 @@ import { SettingsStateModel } from './settings-state-model';
       'judge-2': { judgementItems: [1, 2, 3, 4] },
       'judge-3': { judgementItems: ['Finish'] },
       'judge-master': { judgementItems: ['Start', 1, 2, 3, 4, 'Finish'] },
+      'sample-judge': { judgementItems: [1, 2, 3, 4, 17] },
     },
     attempts: [
       { code: 'attempt1', title: 'попытка №1' },
