@@ -34,7 +34,6 @@ type JudgableForm = {
   itemTypes: JudgementItemType[];
 };
 
-//TODO подумать насчёт разных компонент для режимов "онлайн" и "корректировка"
 @Component({
   selector: 'app-edit-judge-data-page',
   templateUrl: './edit-judge-data-page.component.html',
@@ -77,6 +76,8 @@ export class EditJudgeDataPageComponent implements OnInit {
       formGroup: new FormGroup(controls),
       itemTypes,
     };
+
+    // form.formGroup.setValue({'Start': '14:56:10'});
     return form;
   }
 

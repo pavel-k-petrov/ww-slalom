@@ -17,7 +17,7 @@
     ></app-gate-item-control>
 
     <app-time-item-control *ngIf="itemType == 'Start' || itemType == 'Finish'"
-      [control]="form.formGroup.controls[itemType]"
+      [formControl]="form.formGroup.controls[itemType]"
       [title]="itemType"
     ></app-time-item-control>
   </div>
@@ -25,7 +25,7 @@
     <hr/>
     <p>debug</p>
     <p>{{ form.itemTypes }}</p>
-    <p>{{ getValue(form) }}</p>
+    <p>{{ getValue(form) }} (<span>{{form.formGroup.valid}}</span>)</p>
     <p>{{ getScoresValue() }}</p>
   </div>
 </div>
