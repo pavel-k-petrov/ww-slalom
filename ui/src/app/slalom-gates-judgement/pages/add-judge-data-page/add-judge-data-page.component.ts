@@ -4,8 +4,12 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { GoToJudgementAdjustment } from '@app/slalom-gates-judgement/store/slalom-gates-judgement.actions';
-import { GateResult } from '@app/store/judgement/judgement.actions';
+import {
+  GoToJudgementAdjustment,
+  AddAttemptResult,
+} from '@app/slalom-gates-judgement/store/slalom-gates-judgement.actions';
+import { SingleAttemptResults } from '@app/store/judgement/judgement-state-model';
+import { GateResult } from '@app/store/models';
 import { JudgementItemType } from '@app/store/models';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -28,6 +32,7 @@ export class AddJudgeDataPageComponent implements OnInit {
   participantShortInfo$: Observable<string>;
   judgeForm$: Observable<JudgableForm>;
   currentItemIndex: number;
+  data$: Observable<string>;
   scores = {};
 
   constructor(private store: Store, private cdf: ChangeDetectorRef) {
@@ -39,6 +44,9 @@ export class AddJudgeDataPageComponent implements OnInit {
       .pipe(
         map((judge) => this.createFormControl(judge?.judgementItems ?? []))
       );
+    this.data$ = this.store.select(
+      SlalomGateJudgementSelectors.currentJudgementDataJsonFromRoute
+    );
   }
 
   ngOnInit(): void {
@@ -56,17 +64,17 @@ export class AddJudgeDataPageComponent implements OnInit {
     return '' + item;
   }
 
-  getScoresValue(): string {
-    return JSON.stringify(this.scores);
-  }
-
   onGateScored(
     itemType: JudgementItemType,
     isLast: boolean,
     result: GateResult
   ): void {
-    this.scores[itemType] = result;
     this.currentItemIndex++;
+    const data: SingleAttemptResults = {};
+    data[itemType as number] = result;
+
+    this.store.dispatch(new AddAttemptResult(data));
+    this.scores[itemType] = result;
     this.cdf.markForCheck();
     if (isLast) {
       this.store.dispatch(new GoToJudgementAdjustment());

@@ -2,30 +2,60 @@
   <mat-card-title> {{ participantShortInfo$ | async }} </mat-card-title>
 </mat-card>
 <div *ngIf="judgeForm$ | async as form">
-  <div class="judge-item-control"
-    *ngFor="
-      let itemType of form.itemTypes;
-      index as index;
-      trackBy: judgableItemTrackBy
-    "
-  >
-    <app-gate-item-control *ngIf="itemType !== 'Start' && itemType !== 'Finish'"
-      [score]="scores[itemType]"
-      [gateNumber]="itemType"
+  <form [formGroup]="form.formGroup">
+    <div class="items">
+      <div
+        class="judge-item-control"
+        *ngFor="
+          let itemType of form.itemTypes;
+          index as index;
+          trackBy: judgableItemTrackBy
+        "
+      >
+        <app-gate-item-control
+          *ngIf="itemType !== 'start' && itemType !== 'finish'"
+          [gateNumber]="itemType"
+          [formControl]="form.formGroup.controls[itemType]"
+        ></app-gate-item-control>
 
-      (valueSelected)="onGateScored(itemType, $event)"
-    ></app-gate-item-control>
+        <app-time-item-control
+          *ngIf="itemType == 'start'"
+          [formControl]="form.formGroup.controls[itemType]"
+          title="Старт"
+        ></app-time-item-control>
 
-    <app-time-item-control *ngIf="itemType == 'Start' || itemType == 'Finish'"
-      [formControl]="form.formGroup.controls[itemType]"
-      [title]="itemType"
-    ></app-time-item-control>
-  </div>
+        <app-time-item-control
+          *ngIf="itemType == 'finish'"
+          [formControl]="form.formGroup.controls[itemType]"
+          title="Финиш"
+        ></app-time-item-control>
+      </div>
+    </div>
+    <div class="buttons">
+      <div class="button-container">
+        <button
+          mat-raised-button
+          type="submit"
+          color="primary"
+          [disabled]="!form.formGroup.valid"
+          (click)="onSubmit(form.formGroup)"
+        >
+          Подтвердить
+        </button>
+      </div>
+      <div class="button-container">
+        <button mat-raised-button>Назад</button>
+      </div>
+    </div>
+  </form>
   <div>
-    <hr/>
+    <hr />
     <p>debug</p>
     <p>{{ form.itemTypes }}</p>
-    <p>{{ getValue(form) }} (<span>{{form.formGroup.valid}}</span>)</p>
-    <p>{{ getScoresValue() }}</p>
+    <p>
+      {{ getValue(form) }} (<span>{{ form.formGroup.valid }}</span
+      >)
+    </p>
+    <div *ngIf="data$ | async as data">state - {{ data }}</div>
   </div>
 </div>

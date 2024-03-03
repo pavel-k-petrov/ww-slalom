@@ -1,17 +1,17 @@
 import { Selector } from '@ngxs/store';
 
-import { JudgementStateModel } from './judgement-state-model';
+import { JudgementStateModel, SingleAttemptResults } from './judgement-state-model';
 import { JudgementState } from './judgement.state';
 
 export class JudgementSelectors {
   @Selector([JudgementState])
-  static byNumber(state: JudgementStateModel) {
+  static byNumberAndAttempt(state: JudgementStateModel) {
     return (
-      participantNumber: number
-      // параметры
+      participantNumber: number,
+      attemptCode: string,
     ) => {
-      // данные
-      const result = [];
+      const result: SingleAttemptResults = state[participantNumber]?.[attemptCode] ?? {};
+
       return result;
     };
   }

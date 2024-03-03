@@ -1,4 +1,6 @@
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { JudgementSelectors } from '@app/store/judgement/judgement.selectors';
+import { GateResult, JudgementItemType } from '@app/store/models';
 import {
   Participant,
   ParticipantsStateModel,
@@ -103,10 +105,7 @@ export class SlalomGateJudgementSelectors {
     return result;
   }
 
-  @Selector([
-    SettingsState,
-    SlalomGateJudgementSelectors.judgementIdsFromRoute,
-  ])
+  @Selector([SettingsState, SlalomGateJudgementSelectors.judgementIdsFromRoute])
   static currentJudgeFromRoute(
     state: SettingsStateModel,
     ids: {
@@ -117,5 +116,32 @@ export class SlalomGateJudgementSelectors {
   ) {
     const judge = state.judges[ids.judgeId];
     return judge;
+  }
+
+  @Selector([SlalomGateJudgementSelectors.currentJudgementDataFromRoute])
+  static currentJudgementDataJsonFromRoute(data: any) {
+    return JSON.stringify(data);
+  }
+
+  @Selector([
+    JudgementSelectors.byNumberAndAttempt,
+    SlalomGateJudgementSelectors.judgementIdsFromRoute,
+  ])
+  static currentJudgementDataFromRoute(
+    judgementDataSelector: (
+      participantNumber: number,
+      attemptCode: string
+    ) => { [item in JudgementItemType]?: GateResult | string },
+    ids: {
+      judgeId: string;
+      attemptCode: string;
+      participantNumber: string;
+    }
+  ) {
+    const attemtResult = judgementDataSelector(
+      Number(ids?.participantNumber),
+      ids.attemptCode
+    );
+    return attemtResult;
   }
 }

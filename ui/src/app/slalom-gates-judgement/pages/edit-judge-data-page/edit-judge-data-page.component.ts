@@ -4,13 +4,15 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AddAttemptResult } from '@app/slalom-gates-judgement/store/slalom-gates-judgement.actions';
 import { SlalomGateJudgementSelectors } from '@app/slalom-gates-judgement/store/slalom-gates-judgement.selectors';
-import { GateResult } from '@app/store/judgement/judgement.actions';
+import { SingleAttemptResults } from '@app/store/judgement/judgement-state-model';
+import { GateResult } from '@app/store/models';
 import { JudgementItemType } from '@app/store/models';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, withLatestFrom } from 'rxjs/operators';
 
 /**
  * ввод результатов участников по набору "судейских элементов" (старт-финищ-ворота)
@@ -47,6 +49,7 @@ export class EditJudgeDataPageComponent implements OnInit {
   currentItemIndex: number;
   currentValues: { [key in JudgementItemType]?: any } = {};
   scores = { 1: 2 };
+  data$: Observable<string>;
 
   constructor(private store: Store, private cdf: ChangeDetectorRef) {
     this.participantShortInfo$ = this.store
@@ -55,18 +58,25 @@ export class EditJudgeDataPageComponent implements OnInit {
     this.judgeForm$ = this.store
       .select(SlalomGateJudgementSelectors.currentJudgeFromRoute)
       .pipe(
-        map((judge) => this.createFormControl(judge?.judgementItems ?? []))
+        withLatestFrom(this.store.select(
+          SlalomGateJudgementSelectors.currentJudgementDataFromRoute
+        )),
+        map(([judge, data]) => this.createFormControl(judge?.judgementItems ?? [], data))
       );
+    this.data$ = this.store.select(
+      SlalomGateJudgementSelectors.currentJudgementDataJsonFromRoute
+    );
   }
 
   ngOnInit(): void {
     this.currentItemIndex = 0;
   }
 
-  createFormControl(itemTypes: JudgementItemType[]): JudgableForm {
+  createFormControl(itemTypes: JudgementItemType[], data: any): JudgableForm {
     const controls = itemTypes.reduce(
       (x: any, currentValue: JudgementItemType) => {
-        x[currentValue] = new FormControl();
+        const value = data[currentValue];
+        x[currentValue] = new FormControl(value, [Validators.required]);
         return x;
       },
       {}
@@ -77,7 +87,7 @@ export class EditJudgeDataPageComponent implements OnInit {
       itemTypes,
     };
 
-    // form.formGroup.setValue({'Start': '14:56:10'});
+    //form.formGroup.setValue({'Start': '14:56:10'});
     return form;
   }
 
@@ -97,8 +107,11 @@ export class EditJudgeDataPageComponent implements OnInit {
     return JSON.stringify(this.scores);
   }
 
-  onGateScored(itemType: JudgementItemType, result: GateResult): void {
-    this.scores[itemType] = result;
-    this.cdf.markForCheck();
+  onSubmit(formGroup: FormGroup): void {
+    // const data: SingleAttemptResults = {};
+    // data[itemType as number] = result;
+
+    const action = new AddAttemptResult(formGroup.value);
+    this.store.dispatch(action);
   }
 }

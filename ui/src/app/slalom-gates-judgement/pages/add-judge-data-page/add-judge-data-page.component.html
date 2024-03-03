@@ -2,7 +2,8 @@
   <mat-card-title> {{ participantShortInfo$ | async }} </mat-card-title>
 </mat-card>
 <div *ngIf="judgeForm$ | async as form">
-  <div class="judge-item-control"
+  <div
+    class="judge-item-control"
     *ngFor="
       let itemType of form.itemTypes;
       index as index;
@@ -10,20 +11,22 @@
       trackBy: judgableItemTrackBy
     "
   >
-    <app-gate-item-control *ngIf="itemType !== 'Start' && itemType !== 'Finish'"
+    <app-gate-item-control
+      *ngIf="itemType !== 'start' && itemType !== 'finish'"
       [score]="scores[itemType]"
       [gateNumber]="itemType"
       [disabled]="index != currentItemIndex"
       (valueSelected)="onGateScored(itemType, last, $event)"
     ></app-gate-item-control>
-    <app-time-item-control *ngIf="itemType == 'Start' || itemType == 'Finish'"
+    <app-time-item-control
+      *ngIf="itemType == 'start' || itemType == 'finish'"
       [title]="itemType"
     ></app-time-item-control>
     <div class="disabler" *ngIf="index != currentItemIndex"></div>
   </div>
   <div>
-    <hr/>
+    <hr />
     <p>debug</p>
-    <p>{{ getScoresValue() }}</p>
+    <div *ngIf="data$ | async as data">state - {{ data }}</div>
   </div>
 </div>

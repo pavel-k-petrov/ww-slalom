@@ -1,14 +1,17 @@
 <form [formGroup]="timeForm">
   <mat-label class="title">{{ title }}</mat-label>
   <mat-form-field class="time-part-input">
-    <input matInput placeholder="Час" mask="Hh" formControlName="hour" [leadZeroDateTime]="true"/>
+    <input matInput mask="Hh" formControlName="hour" [leadZeroDateTime]="true"/>
+    <mat-hint>Час</mat-hint>
   </mat-form-field>
   <span>:&nbsp;</span>
   <mat-form-field class="time-part-input">
-    <input matInput placeholder="Мин" mask="m0" formControlName="minute" [leadZeroDateTime]="true"/>
+    <input matInput mask="m0" formControlName="minute" [leadZeroDateTime]="true"/>
+    <mat-hint>Мин</mat-hint>
   </mat-form-field>
   <span>:&nbsp;</span>
   <mat-form-field class="time-part-input">
-    <input matInput placeholder="Сек" mask="s0"  formControlName="second" [leadZeroDateTime]="true"/>
+    <input matInput mask="s0"  formControlName="second" [leadZeroDateTime]="true"/>
+    <mat-hint>Сек</mat-hint>
   </mat-form-field>
 </form>
