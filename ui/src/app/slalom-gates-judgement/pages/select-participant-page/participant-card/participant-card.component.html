@@ -1,0 +1,12 @@
+<mat-card *ngIf="participant">
+  {{ participant.shortInfo }}
+  <mat-card-actions>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onJudgeButtonClick(participant)"
+    >
+      Судить
+    </button>
+  </mat-card-actions>
+</mat-card>

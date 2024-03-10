@@ -2,20 +2,15 @@
   *ngTemplateOutlet="
     paticipantSelection;
     context: {
-      currentAttempt: currentAttempt$ | async,
-      attempts: attempts$ | async
+      currentAttempt: currentAttempt$ | async
     }
   "
 >
 </ng-container>
-<ng-template
-  #paticipantSelection
-  let-currentAttempt="currentAttempt"
-  let-attempts="attempts"
->
-  <p>Judge - {{ judgeId$ | async }}</p>
+<ng-template #paticipantSelection let-currentAttempt="currentAttempt">
+  <p>{{ judgeId$ | async }}</p>
   <p *ngIf="currentAttempt">
-    Текущая попытка - {{ currentAttempt.title }} {{ currentAttempt.code }}
+    Текущая попытка - {{ currentAttempt.title }}
   </p>
   <!-- <mat-icon>input</mat-icon>&nbsp; -->
   <mat-form-field class="full-width" appearance="fill">
@@ -29,56 +24,27 @@
     />
   </mat-form-field>
 
-  <mat-card *ngIf="participantByNumber$ | async as participant">
-    <mat-card-title> {{ participant.title }} </mat-card-title>
-    <mat-radio-group
-      [value]="participant.attemptCode"
-      [formControl]="attemptControl"
-    >
-      <mat-radio-button
-        *ngFor="let attempt of attempts"
-        value="{{ attempt.code }}"
-      >
-        {{ attempt.title }}
-      </mat-radio-button>
-    </mat-radio-group>
-    <mat-card-actions>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="gotoParticipantByNumberJudgement(participant)"
-      >
-        Ввести данные по воротам
-      </button>
-    </mat-card-actions>
-  </mat-card>
+  <app-participant-card
+    [participant]="participantByNumber$ | async"
+    (actionButtonClick)="gotoParticipantByNumberJudgement($event)"
+  >
+  </app-participant-card>
 
   <mat-expansion-panel expanded="true">
     <mat-expansion-panel-header>
       <mat-panel-title> Очередь участников </mat-panel-title>
     </mat-expansion-panel-header>
-    <mat-card
-      *ngFor="let participant of recommendedForJudge$ | async"
-      class="recomended-card"
+    <app-participant-card
+      *ngFor="let recommended of recommendedForJudge$ | async"
+      [participant]="recommended"
+      (actionButtonClick)="gotoParticipantByNumberJudgement($event)"
     >
-      {{ participant.shortInfo }}
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="selectRecomendedParticipant(participant)"
-      >
-        Выбрать
-      </button>
-    </mat-card>
+    </app-participant-card>
   </mat-expansion-panel>
 
   <mat-expansion-panel expanded="false">
     <mat-expansion-panel-header>
-      <mat-panel-title> Исправление введённых (1-я попытка) </mat-panel-title>
+      <mat-panel-title> Исправление введённых</mat-panel-title>
     </mat-expansion-panel-header>
-    <mat-chip-list class="mat-chip-list-stacked" aria-orientation="vertical">
-      <mat-chip> 52 - Ivanov Michale (K1) </mat-chip>
-      <mat-chip> 59 - Брют Анн (С1ж) </mat-chip>
-    </mat-chip-list>
   </mat-expansion-panel>
 </ng-template>

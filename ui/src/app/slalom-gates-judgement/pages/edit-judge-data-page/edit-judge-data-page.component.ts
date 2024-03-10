@@ -5,7 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AddAttemptResult } from '@app/slalom-gates-judgement/store/slalom-gates-judgement.actions';
+import { AddAttemptResult, GoToParticipantSelection } from '@app/slalom-gates-judgement/store/slalom-gates-judgement.actions';
 import { SlalomGateJudgementSelectors } from '@app/slalom-gates-judgement/store/slalom-gates-judgement.selectors';
 import { SingleAttemptResults } from '@app/store/judgement/judgement-state-model';
 import { GateResult } from '@app/store/models';
@@ -108,10 +108,13 @@ export class EditJudgeDataPageComponent implements OnInit {
   }
 
   onSubmit(formGroup: FormGroup): void {
-    // const data: SingleAttemptResults = {};
-    // data[itemType as number] = result;
-
     const action = new AddAttemptResult(formGroup.value);
     this.store.dispatch(action);
+
+    this.store.dispatch(new GoToParticipantSelection());
+  }
+
+  onGotoBack(): void {
+    this.store.dispatch(new GoToParticipantSelection());
   }
 }

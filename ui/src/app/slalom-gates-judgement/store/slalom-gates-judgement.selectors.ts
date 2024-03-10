@@ -1,5 +1,8 @@
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CompetitionFlowSelectors } from '@app/store/competition-flow/competition-flow.selectors';
+import { JudgementStateModel } from '@app/store/judgement/judgement-state-model';
 import { JudgementSelectors } from '@app/store/judgement/judgement.selectors';
+import { JudgementState } from '@app/store/judgement/judgement.state';
 import { GateResult, JudgementItemType } from '@app/store/models';
 import {
   Participant,
@@ -15,6 +18,22 @@ import { Selector } from '@ngxs/store';
 import { ParticipantForJudgement } from './models';
 
 export class SlalomGateJudgementSelectors {
+  private static mapParticipantToJudgedParticipant(
+    participantNumber: number,
+    participant: Participant
+  ) {
+    const judged: ParticipantForJudgement = participant
+      ? {
+          participantNumber: participantNumber + '',
+          shortInfo: `${participantNumber} - ${participant.name} (${participant.group})`,
+        }
+      : {
+          participantNumber: participantNumber + '',
+          shortInfo: participantNumber + ' - незарегистрирован',
+        };
+    return judged;
+  }
+
   @Selector([
     ParticipantsState,
     SlalomGateJudgementSelectors.judgementIdsFromRoute,
@@ -31,54 +50,59 @@ export class SlalomGateJudgementSelectors {
     const participant: Participant = !isNaN(participantNumber)
       ? state[participantNumber]
       : undefined;
-    const judged: ParticipantForJudgement = participant
-      ? {
-          participantNumber: participantNumber + '',
-          shortInfo: `${participantNumber} - ${participant.name} (${participant.group})`,
-        }
-      : {
-          participantNumber: participantNumber + '',
-          shortInfo: participantNumber + ' - незарегистрирован',
-        };
+    const judged: ParticipantForJudgement =
+      this.mapParticipantToJudgedParticipant(participantNumber, participant);
     return judged;
   }
 
-  @Selector([ParticipantsSelectors.recomendedForJudge])
-  static recomendedForJudge(
-    selector: (judgeId: string) => ParticipantsStateModel
-  ): (judgeId: string) => ParticipantForJudgement[] {
-    // return (judgeName: string) => selector(judgeName);
-    return (judgeId: string) => [
-      {
-        attemptCode: 'attempt1',
-        participantNumber: '51',
-        shortInfo: '51 - Владимир Соколов (K1) попытка 1',
-      },
-      {
-        attemptCode: 'attempt1',
-        participantNumber: '53',
-        shortInfo: '53 - Жан Жак Руссо (K1) попытка 1',
-      },
-      {
-        attemptCode: 'attempt1',
-        participantNumber: '58',
-        shortInfo: '58 - Алёхин Александр (K1) попытка 1',
-      },
-    ];
+  @Selector([ParticipantsSelectors.byNumber])
+  static participantByNumber(
+    selector: (participantNumber: number) => Participant
+  ) {
+    return (participantNumber: number) =>
+      this.mapParticipantToJudgedParticipant(
+        participantNumber,
+        selector(participantNumber)
+      );
   }
 
-  @Selector([RouterState])
-  static judgeIdFromRoute(routerState: RouterStateModel): string {
-    const routerSnapshot: RouterStateSnapshot = routerState.state;
-    let node: ActivatedRouteSnapshot = routerSnapshot.root;
-    while (node.firstChild) {
-      const judgeId = node.params['judge-id'];
-      if (judgeId) {
-        return judgeId;
-      }
-      node = node.firstChild;
-    }
+  @Selector([
+    SlalomGateJudgementSelectors.currentJudgeFromRoute,
+    CompetitionFlowSelectors.currentAttempt,
+    JudgementState,
+    SlalomGateJudgementSelectors.participantByNumber
+  ])
+  static recomendedForJudge(
+    judge: {
+      judgementItems: JudgementItemType[];
+    },
+    attempt: { code: string; title: string },
+    state: JudgementStateModel,
+    participantSelector: (participantNumber: number) => ParticipantForJudgement,
+  ): ParticipantForJudgement[] {
+    const recomended = Object.getOwnPropertyNames(state).reduce(
+      (
+        previousValue: [],
+        currentValue: string /*, idx: number, arr: string[]*/
+      ) => {
+        const allData = state[Number(currentValue)];
+        const data = allData ? allData[attempt.code] : undefined;
+        if (
+          !data ||
+          Object.getOwnPropertyNames(data).length === 0 ||
+          judge?.judgementItems.every((x) => data.hasOwnProperty(x))
+        ) {
+          return previousValue;
+        }
+        const participant = participantSelector(Number(currentValue));
+        participant.attemptCode = attempt.code;
+        return [...previousValue, participant];
+      },
+      []
+    );
+    return recomended;
   }
+
   /**
    * получить параметры урла - код судьи, попытки, номер участника
    */
@@ -103,6 +127,11 @@ export class SlalomGateJudgementSelectors {
     }
 
     return result;
+  }
+
+  @Selector([SettingsState, SlalomGateJudgementSelectors.judgementIdsFromRoute])
+  static judgeSettingsById(state: SettingsStateModel) {
+    return (judgeId) => state.judges[judgeId];
   }
 
   @Selector([SettingsState, SlalomGateJudgementSelectors.judgementIdsFromRoute])

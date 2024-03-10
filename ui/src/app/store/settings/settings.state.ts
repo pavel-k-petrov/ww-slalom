@@ -7,11 +7,11 @@ import { SettingsStateModel } from './settings-state-model';
   name: 'SettingsState',
   defaults: {
     judges: {
-      'judge-1': { judgementItems: ['start'] },
-      'judge-2': { judgementItems: [1, 2, 3, 4] },
-      'judge-3': { judgementItems: ['finish'] },
-      'judge-master': { judgementItems: ['start', 1, 2, 3, 4, 'finish'] },
-      'sample-judge': { judgementItems: ['start', 1, 17] },
+      'judge-1': { title: 'Судья старта', judgementItems: ['start'] },
+      'judge-2': { title: 'Ворота 1 - 4', judgementItems: [1, 2, 3, 4] },
+      'judge-3': { title: 'Судья финиша', judgementItems: ['finish'] },
+      'judge-master': { title: 'Все данные судейства', judgementItems: ['start', 1, 2, 3, 4, 'finish'] },
+      'sample-judge': { title: 'Тестовый судья', judgementItems: ['start', 1, 17] },
     },
     attempts: [
       { code: 'attempt1', title: 'попытка №1' },

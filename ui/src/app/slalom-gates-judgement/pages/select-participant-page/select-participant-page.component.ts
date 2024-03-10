@@ -7,10 +7,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { GoToJudgement } from '@app/slalom-gates-judgement/store/slalom-gates-judgement.actions';
 import { CompetitionFlowSelectors } from '@app/store/competition-flow/competition-flow.selectors';
-import { Participant } from '@app/store/participants/participants-state-model';
-import { ParticipantsSelectors } from '@app/store/participants/participants.selectors';
-import { SettingsSelectors } from '@app/store/settings/settings.selectors';
-import { Store } from '@ngxs/store';
+import { Select, Selector, Store } from '@ngxs/store';
 import {
   BehaviorSubject,
   combineLatest,
@@ -40,97 +37,49 @@ import { SlalomGateJudgementSelectors } from '../../store/slalom-gates-judgement
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectParticipantPageComponent implements OnInit {
+  @Select(SlalomGateJudgementSelectors.recomendedForJudge)
+  recommendedForJudge$: Observable<ParticipantForJudgement[]>;
+
   numberControl = new FormControl();
-  attemptControl = new FormControl();
   judgeId$: Observable<string>;
   currentAttempt$: Observable<{ code: string; title: string }>;
-  recommendedForJudge$: Observable<ParticipantForJudgement[]>;
-  attempts$: Observable<{ code: string; title: string }[]>;
-  participantByNumber$: Observable<{
-    participantNumber: string;
-    title: string;
-    attemptCode?: string;
-  }>;
+  participantByNumber$: Observable<ParticipantForJudgement>;
 
   selectedParticipantNumber$: Subject<string> = new Subject<string>();
-  selectedAttemptCode$: Subject<string> = new Subject<string>();
 
   constructor(private store: Store, private cdf: ChangeDetectorRef) {
-    this.judgeId$ = store.select(SlalomGateJudgementSelectors.judgeIdFromRoute);
+    this.judgeId$ = store
+      .select(SlalomGateJudgementSelectors.currentJudgeFromRoute)
+      .pipe(map((x) => x.title));
     this.currentAttempt$ = store.select(
       CompetitionFlowSelectors.currentAttempt
     );
-    this.recommendedForJudge$ = store
-      .select(SlalomGateJudgementSelectors.recomendedForJudge)
-      .pipe(
-        withLatestFrom(
-          store.select(SlalomGateJudgementSelectors.judgeIdFromRoute)
-        ),
-        map(([selector, judgeId]) => selector(judgeId))
-      );
-    this.attempts$ = store.select(SettingsSelectors.attempts);
 
     this.participantByNumber$ = combineLatest([
       this.numberControl.valueChanges,
       this.currentAttempt$,
-      store.select(ParticipantsSelectors.byNumber),
-      this.attemptControl.valueChanges.pipe(startWith(null)),
+      store.select(SlalomGateJudgementSelectors.participantByNumber),
     ]).pipe(
-      map(
-        ([
-          enteredValue,
-          currentAttempt,
-          participantSelector,
-          attemptSelection,
-        ]) => {
-          if (!enteredValue) {
-            return null;
-          }
-
-          const participant: Participant = participantSelector(enteredValue);
-          if (participant) {
-            return {
-              participantNumber: enteredValue,
-              title: `${enteredValue} - ${participant.name} (${participant.group})`,
-              attemptCode: attemptSelection ?? currentAttempt?.code,
-            };
-          }
-
-          return {
-            participantNumber: enteredValue,
-            title: `${enteredValue} - Неизвестный участник`,
-            attemptCode: currentAttempt?.code,
-          };
+      map(([enteredValue, currentAttempt, participantSelector]) => {
+        if (!enteredValue) {
+          return null;
         }
-      )
-      // tap((participant) =>{
-      //   console.log(`new entered participant ${JSON.stringify(participant)}`);
-      //   this.cdf.markForCheck();
-      // }),
+
+        const participant: ParticipantForJudgement =
+          participantSelector(enteredValue);
+        return {
+          ...participant,
+          attemptCode: currentAttempt?.code,
+        };
+      })
     );
   }
 
   ngOnInit(): void {}
 
-  participantByNumberAttemptChange(attempt, event): void {
-    console.log('attempt override!');
-    console.log(JSON.stringify(attempt));
-  }
-
-  gotoParticipantByNumberJudgement(participant: {
-    participantNumber: string;
-    title: string;
-    attemptCode?: string;
-  }): void {
-    console.log(
-      `Go to judge participant number - ${participant.participantNumber}, attempt ${participant.attemptCode}`
-    );
+  gotoParticipantByNumberJudgement(participant: ParticipantForJudgement): void {
     this.store.dispatch(
       new GoToJudgement(participant.participantNumber, participant.attemptCode)
     );
-  }
-
-  selectRecomendedParticipant(participant: ParticipantForJudgement): void {
-    this.numberControl.patchValue(participant.participantNumber);
   }
 }

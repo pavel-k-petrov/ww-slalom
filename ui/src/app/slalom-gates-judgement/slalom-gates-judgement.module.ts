@@ -47,6 +47,7 @@ import { GateItemControlComponent } from './components/gate-item-control/gate-it
 import { TimeItemControlComponent } from './components/time-item-control/time-item-control.component';
 import { AddJudgeDataPageComponent } from './pages/add-judge-data-page/add-judge-data-page.component';
 import { EditJudgeDataPageComponent } from './pages/edit-judge-data-page/edit-judge-data-page.component';
+import { ParticipantCardComponent } from './pages/select-participant-page/participant-card/participant-card.component';
 import { SelectParticipantPageComponent } from './pages/select-participant-page/select-participant-page.component';
 import { SlalomGatesJudgementRoutingModule } from './slalom-gates-judgement-routing.module';
 import { SlalomGatesJudgementState } from './store/slalom-gates-judgement.state';
@@ -81,6 +82,7 @@ import { SlalomGatesJudgementState } from './store/slalom-gates-judgement.state'
     GateItemControlComponent,
     TimeItemControlComponent,
     AddJudgeDataPageComponent,
+    ParticipantCardComponent,
   ],
 })
 export class SlalomGatesJudgementModule {}
