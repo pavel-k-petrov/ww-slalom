@@ -19,4 +19,9 @@ export class SettingsSelectors {
   static attempts(state: SettingsStateModel) {
     return state.attempts;
   }
+
+  @Selector([SettingsState])
+  static gates(state: SettingsStateModel) {
+    return state.gates;
+  }
 }

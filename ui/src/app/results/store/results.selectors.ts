@@ -42,7 +42,6 @@ export class ResultsSelectors {
     return `${pad(hour)}:${pad(min)}:${pad(sec)}`;
   }
 
-
   private static calculateSingleAttempt(
     attemptData: SingleAttemptResults,
     gates: number[]
@@ -97,7 +96,7 @@ export class ResultsSelectors {
     state: JudgementStateModel,
     participantSelector: (participantNumber: number) => Participant,
     settings: SettingsStateModel
-  ): string {
+  ): ParticipantResult[] {
     const participantResults: ParticipantResult[] = Object.getOwnPropertyNames(
       state
     ).map((x) => {
@@ -121,22 +120,74 @@ export class ResultsSelectors {
 
       return {
         participantNumber,
-        participantData: participantSelector(participantNumber),
+        participantData: participantSelector(participantNumber) ?? {
+          name: 'Незарегистрирован',
+        },
         attempts: calculatedAttempts,
         comparables,
+        bestTotal:
+          attemptMetrics.length > 0
+            ? this.secondsToString(attemptMetrics[0].total)
+            : '',
       } as ParticipantResult;
     });
 
     participantResults.sort((a, b) => {
-      for(let i = 0; i < a.comparables.length; i++) {
-        if (a.comparables[i] !== b.comparables[i]){
+      for (let i = 0; i < a.comparables.length; i++) {
+        if (a.comparables[i] !== b.comparables[i]) {
           return a.comparables[i] - b.comparables[i];
         }
       }
       return 0;
     });
 
+    participantResults.forEach((x, idx) => (x.place = idx + 1));
+
+    return participantResults;
+  }
+
+  @Selector([JudgementState, ParticipantsSelectors.byNumber, SettingsState])
+  static allResultsJson(
+    state: JudgementStateModel,
+    participantSelector: (participantNumber: number) => Participant,
+    settings: SettingsStateModel
+  ): string {
+    const participantResults = this.allResults(
+      state,
+      participantSelector,
+      settings
+    );
     return JSON.stringify(participantResults);
+  }
+
+  @Selector([JudgementState, ParticipantsSelectors.byNumber, SettingsState])
+  static allResultsTable(
+    state: JudgementStateModel,
+    participantSelector: (participantNumber: number) => Participant,
+    settings: SettingsStateModel
+  ): ResultTableRowData[] {
+    const participantResults = this.allResults(
+      state,
+      participantSelector,
+      settings
+    );
+    const tableResults = participantResults.reduce((t, r, idx, arr) => {
+      const { attempts, comparables, ...otherData } = r;
+      for (let i = 0; i < attempts.length; i++) {
+        if (i === 0) {
+          t.push({
+            attempt: attempts[i],
+            rowSpan: attempts.length,
+            ...otherData,
+          });
+        } else {
+          t.push({ attempt: attempts[i], rowSpan: 0 });
+        }
+      }
+
+      return t;
+    }, [] as ResultTableRowData[]);
+    return tableResults;
   }
 }
 
@@ -152,6 +203,8 @@ export class CalculatedAttemptResults {
 }
 
 export class ParticipantResult {
+  place: number;
+  bestTotal: string;
   participantNumber: number;
   participantData: Participant;
   attempts: CalculatedAttemptResults[];
@@ -159,4 +212,13 @@ export class ParticipantResult {
    * результат лучшей попытки, штраф лучшей попытки, резултат другой попытки, штраф
    */
   comparables: number[];
+}
+
+export class ResultTableRowData {
+  place?: number;
+  bestTotal?: string;
+  participantNumber?: number;
+  participantData?: Participant;
+  rowSpan: number;
+  attempt: CalculatedAttemptResults;
 }
