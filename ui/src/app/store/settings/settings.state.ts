@@ -17,6 +17,7 @@ import { SettingsStateModel } from './settings-state-model';
       { code: 'attempt1', title: 'попытка №1' },
       { code: 'attempt2', title: 'попытка №2' },
     ],
+    gates: [1, 2, 3, 4],
   },
 })
 @Injectable()
