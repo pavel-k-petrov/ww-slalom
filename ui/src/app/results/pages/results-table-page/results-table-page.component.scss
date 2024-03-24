@@ -1,6 +1,27 @@
 .results-table td {
   padding: 2px;
 }
+
 .results-table th {
   padding: 2px;
+}
+
+.results-table tr {
+  height: 24px;
+}
+
+.select-group-radio {
+  margin-left: 16px;
+}
+
+@media screen and (max-width: 500px) {
+  .score-details {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 501px) {
+  .score-summary {
+    display: none;
+  }
 }

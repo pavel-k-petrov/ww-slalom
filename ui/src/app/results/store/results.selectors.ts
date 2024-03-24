@@ -4,20 +4,15 @@ import {
   JudgementStateModel,
   SingleAttemptResults,
 } from '@app/store/judgement/judgement-state-model';
-import { JudgementSelectors } from '@app/store/judgement/judgement.selectors';
 import { JudgementState } from '@app/store/judgement/judgement.state';
-import { GateResult, JudgementItemType } from '@app/store/models';
-import {
-  Participant,
-  ParticipantsStateModel,
-} from '@app/store/participants/participants-state-model';
+import { Participant } from '@app/store/participants/participants-state-model';
 import { ParticipantsSelectors } from '@app/store/participants/participants.selectors';
-import { ParticipantsState } from '@app/store/participants/participants.state';
 import { SettingsStateModel } from '@app/store/settings/settings-state-model';
-import { SettingsSelectors } from '@app/store/settings/settings.selectors';
 import { SettingsState } from '@app/store/settings/settings.state';
-import { RouterState, RouterStateModel } from '@ngxs/router-plugin';
 import { Selector } from '@ngxs/store';
+
+import { ResultsStateModel } from './results-state-model';
+import { ResultsState } from './results.state';
 
 export class ResultsSelectors {
   private static timeRegex = /(?<h>\d?\d):(?<m>\d?\d):(?<s>\d?\d)/;
@@ -91,16 +86,34 @@ export class ResultsSelectors {
     } as CalculatedAttemptResults;
   }
 
-  @Selector([JudgementState, ParticipantsSelectors.byNumber, SettingsState])
-  static allResults(
+  @Selector([
+    JudgementState,
+    ParticipantsSelectors.byNumber,
+    SettingsState,
+    ResultsState,
+  ])
+  static results(
     state: JudgementStateModel,
     participantSelector: (participantNumber: number) => Participant,
-    settings: SettingsStateModel
+    settings: SettingsStateModel,
+    resultsState: ResultsStateModel
   ): ParticipantResult[] {
-    const participantResults: ParticipantResult[] = Object.getOwnPropertyNames(
+    let participantResults: ParticipantResult[] = Object.getOwnPropertyNames(
       state
     ).map((x) => {
       const participantNumber = Number(x);
+      const participantData = participantSelector(participantNumber) ?? {
+        name: 'Незарегистрирован',
+        group: undefined,
+      };
+
+      if (
+        resultsState.selectedGroup &&
+        participantData.group !== resultsState.selectedGroup
+      ) {
+        return null;
+      }
+
       const judgementData = state[participantNumber];
       const calculatedAttempts: CalculatedAttemptResults[] =
         settings.attempts.map(({ code }) =>
@@ -118,20 +131,22 @@ export class ResultsSelectors {
         return c;
       }, []);
 
-      return {
+      const returnData = {
         participantNumber,
-        participantData: participantSelector(participantNumber) ?? {
-          name: 'Незарегистрирован',
-        },
+        participantData,
         attempts: calculatedAttempts,
+        hasFullData: !calculatedAttempts.find((a) => !a.hasFullData),
         comparables,
         bestTotal:
           attemptMetrics.length > 0
             ? this.secondsToString(attemptMetrics[0].total)
             : '',
       } as ParticipantResult;
+
+      return returnData;
     });
 
+    participantResults = participantResults.filter((x) => x);
     participantResults.sort((a, b) => {
       for (let i = 0; i < a.comparables.length; i++) {
         if (a.comparables[i] !== b.comparables[i]) {
@@ -146,30 +161,44 @@ export class ResultsSelectors {
     return participantResults;
   }
 
-  @Selector([JudgementState, ParticipantsSelectors.byNumber, SettingsState])
-  static allResultsJson(
+  @Selector([
+    JudgementState,
+    ParticipantsSelectors.byNumber,
+    SettingsState,
+    ResultsState,
+  ])
+  static resultsJson(
     state: JudgementStateModel,
     participantSelector: (participantNumber: number) => Participant,
-    settings: SettingsStateModel
+    settings: SettingsStateModel,
+    resultsState: ResultsStateModel
   ): string {
-    const participantResults = this.allResults(
+    const participantResults = this.results(
       state,
       participantSelector,
-      settings
+      settings,
+      resultsState
     );
     return JSON.stringify(participantResults);
   }
 
-  @Selector([JudgementState, ParticipantsSelectors.byNumber, SettingsState])
-  static allResultsTable(
+  @Selector([
+    JudgementState,
+    ParticipantsSelectors.byNumber,
+    SettingsState,
+    ResultsState,
+  ])
+  static resultsTable(
     state: JudgementStateModel,
     participantSelector: (participantNumber: number) => Participant,
-    settings: SettingsStateModel
+    settings: SettingsStateModel,
+    resultsState: ResultsStateModel
   ): ResultTableRowData[] {
-    const participantResults = this.allResults(
+    const participantResults = this.results(
       state,
       participantSelector,
-      settings
+      settings,
+      resultsState
     );
     const tableResults = participantResults.reduce((t, r, idx, arr) => {
       const { attempts, comparables, ...otherData } = r;
@@ -188,6 +217,25 @@ export class ResultsSelectors {
       return t;
     }, [] as ResultTableRowData[]);
     return tableResults;
+  }
+
+  @Selector([ResultsState])
+  static selectedGroup(state: ResultsStateModel): string {
+    return state.selectedGroup;
+  }
+
+  @Selector([JudgementState, ParticipantsSelectors.byNumber, SettingsState])
+  static availableGroups(
+    state: JudgementStateModel,
+    participantSelector: (participantNumber: number) => Participant
+  ): { title: string; value: string }[] {
+    const activeGroups = Object.getOwnPropertyNames(state)
+      .map((x) => participantSelector(Number(x))?.group)
+      .filter((v, idx, arr) => arr.indexOf(v) === idx)
+      .filter((v) => v)
+      .map((v) => ({ title: v, value: v }));
+
+    return [{ title: 'Все', value: null }, ...activeGroups];
   }
 }
 
@@ -208,6 +256,7 @@ export class ParticipantResult {
   participantNumber: number;
   participantData: Participant;
   attempts: CalculatedAttemptResults[];
+  hasFullData: boolean;
   /** числа для сравнения в порядке важности -
    * результат лучшей попытки, штраф лучшей попытки, резултат другой попытки, штраф
    */
@@ -219,6 +268,7 @@ export class ResultTableRowData {
   bestTotal?: string;
   participantNumber?: number;
   participantData?: Participant;
+  hasFullData?: boolean;
   rowSpan: number;
   attempt: CalculatedAttemptResults;
 }
