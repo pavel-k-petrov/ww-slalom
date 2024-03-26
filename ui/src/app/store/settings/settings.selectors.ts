@@ -15,6 +15,17 @@ export class SettingsSelectors {
       return result?.judgementItems ?? [];
     };
   }
+
+  @Selector([SettingsState])
+  static judgesList(state: SettingsStateModel) {
+    const judgesList = Object.getOwnPropertyNames(state.judges).map((x) => ({
+      code: x,
+      title: state.judges[x].title,
+    }));
+
+    return judgesList;
+  }
+
   @Selector([SettingsState])
   static attempts(state: SettingsStateModel) {
     return state.attempts;

@@ -24,7 +24,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -57,21 +56,20 @@ import { SlalomGatesJudgementState } from './store/slalom-gates-judgement.state'
     CommonModule,
     ReactiveFormsModule,
     SlalomGatesJudgementRoutingModule,
-    MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatDatepickerModule,
+    // MatButtonToggleModule,
+    // MatDatepickerModule,
     MatBadgeModule,
     MatExpansionModule,
-    MatGridListModule,
+    // MatGridListModule,
     MatIconModule,
-    MatProgressSpinnerModule,
-    MatSidenavModule,
-    MatSnackBarModule,
+    // MatProgressSpinnerModule,
+    // MatSidenavModule,
+    // MatSnackBarModule,
     MatCardModule,
-    MatChipsModule,
-    MatButtonToggleModule,
+    // MatChipsModule,
     MatRadioModule,
     NgxMaskModule.forChild(),
     NgxsModule.forFeature([SlalomGatesJudgementState]),

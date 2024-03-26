@@ -1,0 +1,27 @@
+<div>
+  <!---->
+</div>
+<mat-drawer-container class="main-container" hasBackdrop="true" autosize>
+  <mat-drawer #drawer mode="over">
+    <mat-action-list>
+      <button mat-list-item (click)="goToResults()">Результаты</button>
+      <button mat-list-item (click)="goToRegistration()">Регистрация</button>
+      <ng-container *ngIf="judges$ | async as judges">
+        <button *ngFor="let judge of judges" mat-list-item (click)="goToJudgeByCode(judge.code)">{{judge.title}}</button>
+      </ng-container>
+    </mat-action-list>
+  </mat-drawer>
+  <mat-drawer-content>
+    <div>
+      <mat-toolbar>
+        <button mat-icon-button aria-label="Menu" (click)="drawer.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span></span>
+      </mat-toolbar>
+    </div>
+    <div class="main-window">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>
