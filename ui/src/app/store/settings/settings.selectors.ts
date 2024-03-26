@@ -24,4 +24,9 @@ export class SettingsSelectors {
   static gates(state: SettingsStateModel) {
     return state.gates;
   }
+
+  @Selector([SettingsState])
+  static groups(state: SettingsStateModel) {
+    return state.groups;
+  }
 }

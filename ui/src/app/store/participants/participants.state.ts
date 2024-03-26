@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { State } from '@ngxs/store';
+import { Action, State, StateContext } from '@ngxs/store';
 
 import { ParticipantsStateModel } from './participants-state-model';
+import { AddOrUpdateParticipant } from './participants.actions';
 
 @State<ParticipantsStateModel>({
   name: 'ParticipantsState',
   defaults: {
     51: {
-      name: 'Владимир Соколов',
+      name: 'Соколов Владимир',
       group: 'K1',
     },
     25: {
@@ -15,11 +16,11 @@ import { ParticipantsStateModel } from './participants-state-model';
       group: 'Б2см',
     },
     52: {
-      name: 'Егор Летов',
+      name: 'Летов Егор',
       group: 'K1',
     },
     53: {
-      name: 'Жан Жак Руссо',
+      name: 'Руссо Жан Жак',
       group: 'K1',
     },
     58: {
@@ -30,4 +31,16 @@ import { ParticipantsStateModel } from './participants-state-model';
 })
 @Injectable()
 export class ParticipantsState {
+  @Action(AddOrUpdateParticipant)
+  addOrUpdateParticipant(
+    ctx: StateContext<ParticipantsStateModel>,
+    action: AddOrUpdateParticipant
+  ) {
+    const newState = {
+      ...ctx.getState(),
+    };
+
+    newState[action.participantNumber] = action.participantData;
+    ctx.setState(newState);
+  }
 }

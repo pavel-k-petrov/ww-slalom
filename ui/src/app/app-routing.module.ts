@@ -11,7 +11,8 @@ const routes: Routes = [
     path: 'judgement',
     loadChildren: () => import('./slalom-gates-judgement/slalom-gates-judgement.module').then(mod => mod.SlalomGatesJudgementModule),
   },
-  { path: 'results', loadChildren: () => import('./results/results.module').then(m => m.ResultsModule) }
+  { path: 'results', loadChildren: () => import('./results/results.module').then(m => m.ResultsModule) },
+  { path: 'participants', loadChildren: () => import('./participants/participants.module').then(m => m.ParticipantsModule) }
 ];
 
 @NgModule({

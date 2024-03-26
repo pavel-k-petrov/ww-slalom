@@ -15,4 +15,6 @@ export interface SettingsStateModel {
   }[];
 
   gates: number[];
+
+  groups: string[];
 }

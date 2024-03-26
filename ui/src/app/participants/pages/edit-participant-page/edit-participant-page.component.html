@@ -1,0 +1,75 @@
+<form [formGroup]="form">
+  <mat-form-field class="full-width" appearance="fill">
+    <mat-label>ФИО участника</mat-label>
+    <input
+      matInput
+      type="text"
+      placeholder="Введите ФИО"
+      aria-label="ФИО участника"
+      [formControl]="form.controls.name"
+    />
+  </mat-form-field>
+  <mat-form-field class="full-width" appearance="fill">
+    <mat-label>Номер участника</mat-label>
+    <input
+      matInput
+      type="text"
+      inputmode="numeric"
+      mask="999"
+      placeholder="Введите номер"
+      aria-label="Номер участника"
+      [formControl]="form.controls.participantNumber"
+    />
+  </mat-form-field>
+  <mat-radio-group
+    class="select-group-radio-group"
+    *ngIf="groups$ | async as groups"
+    [formControl]="form.controls.group"
+  >
+    <div>
+      <mat-radio-button
+        class="select-group-radio"
+        *ngFor="let group of groups"
+        [value]="group"
+      >
+        {{ group }}
+      </mat-radio-button>
+    </div>
+  </mat-radio-group>
+  <div *ngIf="foundByNumber$ | async as participant; else numberNotRegistered">
+    <mat-card class="registered-info">
+      <mat-card-subtitle>Уже зарегистрирован</mat-card-subtitle>
+      <mat-card-content>
+        {{ participant.name }} - {{ participant.group }}
+      </mat-card-content>
+    </mat-card>
+    <div class="buttons">
+      <div class="button-container">
+        <button
+          mat-raised-button
+          type="submit"
+          color="warn"
+          [disabled]="!form.valid"
+          (click)="onSubmit(form, true)"
+        >
+          Заменить
+        </button>
+      </div>
+    </div>
+  </div>
+  <ng-template #numberNotRegistered>
+    <div class="buttons">
+      <div class="button-container">
+        <button
+          mat-raised-button
+          type="submit"
+          color="primary"
+          [disabled]="!form.valid"
+          (click)="onSubmit(form)"
+        >
+          Зарегистрировать
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</form>
