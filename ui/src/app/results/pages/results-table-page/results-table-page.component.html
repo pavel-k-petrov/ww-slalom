@@ -92,31 +92,31 @@
   <ng-container *ngFor="let gate of gates" [matColumnDef]="'gate' + gate">
     <th mat-header-cell *matHeaderCellDef class="score-details">{{ gate }}</th>
     <td mat-cell *matCellDef="let element" class="score-details">
-      {{ element.attempt.judgeData[gate] }}
+      {{ element.attempt?.judgeData ? element.attempt.judgeData[gate] : '' }}
     </td>
   </ng-container>
   <ng-container matColumnDef="start">
     <th mat-header-cell *matHeaderCellDef class="score-details">Старт</th>
     <td mat-cell *matCellDef="let element" class="score-details">
-      {{ element.attempt.judgeData.start }}
+      {{ element.attempt?.judgeData?.start }}
     </td>
   </ng-container>
   <ng-container matColumnDef="finish">
     <th mat-header-cell *matHeaderCellDef class="score-details">Финиш</th>
     <td mat-cell *matCellDef="let element" class="score-details">
-      {{ element.attempt.judgeData.finish }}
+      {{ element.attempt.judgeData?.finish }}
     </td>
   </ng-container>
   <ng-container matColumnDef="penalty">
     <th mat-header-cell *matHeaderCellDef class="score-details">Штраф</th>
     <td mat-cell *matCellDef="let element" class="score-details">
-      {{ element.attempt.penalty }}
+      {{ element.attempt?.penalty }}
     </td>
   </ng-container>
   <ng-container matColumnDef="total">
     <th mat-header-cell *matHeaderCellDef class="score-details">Итого</th>
     <td mat-cell *matCellDef="let element" class="score-details">
-      {{ element.attempt.totalString }}
+      {{ element.attempt?.totalString }}
     </td>
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="getColumnNames(gates)"></tr>

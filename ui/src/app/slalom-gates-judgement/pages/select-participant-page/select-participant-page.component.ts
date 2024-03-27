@@ -15,7 +15,7 @@ import {
   Observable,
   Subject,
 } from 'rxjs';
-import { map, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { filter, map, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ParticipantForJudgement } from '../../store/models/participant-for-judgement';
 import { SlalomGateJudgementSelectors } from '../../store/slalom-gates-judgement.selectors';
@@ -50,7 +50,7 @@ export class SelectParticipantPageComponent implements OnInit {
   constructor(private store: Store, private cdf: ChangeDetectorRef) {
     this.judgeId$ = store
       .select(SlalomGateJudgementSelectors.currentJudgeFromRoute)
-      .pipe(map((x) => x.title));
+      .pipe(filter(x => !!x), map((x) => x.title));
     this.currentAttempt$ = store.select(
       CompetitionFlowSelectors.currentAttempt
     );

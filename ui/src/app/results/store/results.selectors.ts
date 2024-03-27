@@ -41,6 +41,16 @@ export class ResultsSelectors {
     attemptData: SingleAttemptResults,
     gates: number[]
   ): CalculatedAttemptResults {
+    if (!attemptData) {
+      return {
+        judgeData: null,
+        hasFullData: false,
+        isDnf: true,
+        penalty: null,
+        total: 24 * 60 * 60,
+      } as CalculatedAttemptResults;
+    }
+
     let isDnf = false;
     let hasFullData = true;
     let penalty = 0;
