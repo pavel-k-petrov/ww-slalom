@@ -1,0 +1,14 @@
+<div *ngIf="attemps$ | async as attempts">
+    <mat-card class="attempt-card" *ngFor="let attempt of attempts" mat-list-item>
+      <mat-card-title>{{ attempt.title }}</mat-card-title>
+      <div class="attempt-action">
+        <ng-container *ngIf="attempt.isSelected; else switchToButton">
+          <mat-icon>check</mat-icon>
+          <span>Вы находитесь здесь</span>
+        </ng-container>
+        <ng-template #switchToButton>
+          <button mat-raised-button color="primary" (click)="onSetCurrentAttempt(attempt)">Перейти сюда</button>
+        </ng-template>
+      </div>
+    </mat-card>
+  </div>

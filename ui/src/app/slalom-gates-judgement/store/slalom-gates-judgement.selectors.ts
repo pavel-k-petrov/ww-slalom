@@ -1,6 +1,6 @@
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { CompetitionFlowSelectors } from '@app/store/competition-flow/competition-flow.selectors';
-import { JudgementStateModel } from '@app/store/judgement/judgement-state-model';
+import { JudgementStateModel, SingleAttemptResults } from '@app/store/judgement/judgement-state-model';
 import { JudgementSelectors } from '@app/store/judgement/judgement.selectors';
 import { JudgementState } from '@app/store/judgement/judgement.state';
 import { GateResult, JudgementItemType } from '@app/store/models';
@@ -86,11 +86,12 @@ export class SlalomGateJudgementSelectors {
         currentValue: string /*, idx: number, arr: string[]*/
       ) => {
         const allData = state[Number(currentValue)];
-        const data = allData ? allData[attempt.code] : undefined;
+        const data: SingleAttemptResults = allData ? allData[attempt.code] : undefined;
         if (
           !data ||
           Object.getOwnPropertyNames(data).length === 0 ||
-          judge?.judgementItems.every((x) => data.hasOwnProperty(x))
+          judge?.judgementItems.every((x) => data.hasOwnProperty(x)) ||
+          Object.getOwnPropertyNames(data).find((x) => data[x] === 'DNF')
         ) {
           return previousValue;
         }

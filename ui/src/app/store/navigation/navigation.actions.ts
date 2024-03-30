@@ -13,3 +13,7 @@ export class GoToRegistration {
   constructor() {}
 }
 
+export class GoToManagement {
+  static readonly type = '[Global] GoManagement';
+  constructor() {}
+}

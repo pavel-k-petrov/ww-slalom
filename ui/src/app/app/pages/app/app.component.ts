@@ -1,6 +1,11 @@
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
-import { GoToJudgeByCode, GoToRegistration, GoToResults } from '@app/store/navigation/navigation.actions';
+import {
+  GoToJudgeByCode,
+  GoToManagement,
+  GoToRegistration,
+  GoToResults,
+} from '@app/store/navigation/navigation.actions';
 import { SettingsSelectors } from '@app/store/settings/settings.selectors';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -21,7 +26,12 @@ export class AppComponent {
   title = 'Гребной слалом - Тьмацкий перекат';
 
   constructor(private store: Store) {}
-// TODO сделать отдельный компонент для навигации
+  // TODO сделать отдельный компонент для навигации
+
+  goToManagement(): void {
+    this.store.dispatch(new GoToManagement());
+    this.drawerRef.close();
+  }
   goToResults(): void {
     this.store.dispatch(new GoToResults());
     this.drawerRef.close();

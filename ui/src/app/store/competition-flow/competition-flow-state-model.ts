@@ -1,4 +1,4 @@
-export interface CopmetitionFlowStateModel {
+export interface CompetitionFlowStateModel {
   currentAttempt: {
     code: string;
     title: string;

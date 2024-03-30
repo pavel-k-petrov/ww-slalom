@@ -4,6 +4,7 @@ import { Action, State, StateContext, Store } from '@ngxs/store';
 
 import {
   GoToJudgeByCode,
+  GoToManagement,
   GoToRegistration,
   GoToResults,
 } from './navigation.actions';
@@ -23,6 +24,10 @@ export class NavigationState {
   @Action(GoToResults)
   goToResults(ctx: StateContext<unknown>) {
     ctx.dispatch(new Navigate(['results'], undefined, {}));
+  }
+  @Action(GoToManagement)
+  goManagement(ctx: StateContext<unknown>) {
+    ctx.dispatch(new Navigate(['management'], undefined, {}));
   }
 
   @Action(GoToJudgeByCode)

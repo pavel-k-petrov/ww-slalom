@@ -4,6 +4,7 @@
 <mat-drawer-container class="main-container" hasBackdrop="true" autosize>
   <mat-drawer #drawer mode="over">
     <mat-action-list>
+      <button mat-list-item (click)="goToManagement()">Управление</button>
       <button mat-list-item (click)="goToResults()">Результаты</button>
       <button mat-list-item (click)="goToRegistration()">Регистрация</button>
       <ng-container *ngIf="judges$ | async as judges">
